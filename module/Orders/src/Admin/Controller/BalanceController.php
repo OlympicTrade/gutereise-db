@@ -70,16 +70,6 @@ class BalanceController extends AbstractController
             ],
         ];
     }
-/*
-    public function setPaidAction()
-    {
-        $ids  = $this->params()->fromPost('ids');
-        $type = $this->params()->fromPost('type');
-
-        return new JsonModel([
-            'status' => (int) $this->getBalanceService()->setStatusPaid($type, $ids)
-        ]);
-    }*/
 
     /**
      * @return \Orders\Admin\Service\BalanceService
