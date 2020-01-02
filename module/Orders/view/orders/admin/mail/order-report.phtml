@@ -1,0 +1,19 @@
+<h2 style="font-size: 24px; font-weight: normal;padding:0; margin:20px 0 10px 0;">Отчет</h2>
+
+<table class="std-table orders-table" border="1" style="background: #f4f4f4; font-size: 14px; border: 1px solid #D9D9D9; width: auto; margin: 0 auto;">
+    <thead>
+    <?php foreach($cols as $col) { ?>
+        <th style="width: <?php echo $col['width'] ?>px"><?php echo $col['label'] ?></th>
+    <?php }?>
+    </thead>
+    <tbody>
+    <?php
+    foreach($this->orders as $order) {
+        echo '<tr data-id="' . $order->id() . '">';
+        foreach($cols as $col) {
+            echo call_user_func_array($col['td'], array($order));
+        }
+        echo '</tr>';
+    } ?>
+    </tbody>
+</table>

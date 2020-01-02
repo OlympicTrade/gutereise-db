@@ -1,0 +1,12 @@
+<?php
+use Pipe\Calendar\Calendar;
+
+$calendar = new Calendar('balance');
+echo $this->calendar($calendar, [])->renderBase();
+?>
+
+<script>
+$('#calendar-balance').calendar({
+    url: '/balance/get-calendar-page/',
+});
+</script>

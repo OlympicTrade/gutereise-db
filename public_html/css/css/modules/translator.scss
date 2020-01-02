@@ -1,0 +1,110 @@
+
+.langs-table {
+    .controls {
+        margin-bottom: 14px;
+    }
+
+    .btn {
+        padding: 0;
+
+        i {
+            margin: 0;
+            text-align: center;
+        }
+    }
+
+    .add,
+    .sync,
+    .search {
+        height: 32px;
+        margin-right: 5px;
+    }
+
+    .sync,
+    .add {
+        padding: 0;
+        width: 32px;
+        background: #0090d9;
+        text-align: center;
+        line-height: 32px;
+        color: #ffffff;
+        display: inline-block;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .search {
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .row {
+        display: flex;
+        border: 1px solid #c3c3c3;
+        border-top: none;
+
+        &:first-child {
+            border-top: 1px solid #c3c3c3;
+        }
+
+        &.focus textarea {
+            height: 150px;
+        }
+    }
+
+    .cell {
+        position: relative;
+        flex: 1;
+        min-height: 36px;
+        font-size: 15px;
+        border-left: 1px solid #c3c3c3;
+
+        &:first-child {
+            border-left: none;
+        }
+
+        &.ctrls {
+            flex: 0 36px;
+        }
+    }
+
+    textarea {
+        height: 36px;
+        padding: 4px 8px;
+        width: 100%;
+        transition: all ease .2s;
+        border: none;
+        display: block;
+
+        &[data-lang="en"],
+        &[data-lang="de"] {
+            padding-right: 40px;
+        }
+
+    }
+
+    .link, .del {
+        color: #ffffff;
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+        text-align: center;
+        background: #0090d9;
+        cursor: pointer;
+        display: block;
+    }
+
+    .tr {
+        padding: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        color: #ffffff;
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+        text-align: center;
+        background: #0090d9;
+        cursor: pointer;
+    }
+}

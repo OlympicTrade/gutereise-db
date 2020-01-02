@@ -1,0 +1,687 @@
+<?php
+$factory = $this->formFactory()->setForm($form);
+?>
+
+<div class="calc-form">
+    <button data-fancybox-close="" class="fancybox-close-small"></button>
+    <div class="header">Калькулятор стоимости</div>
+    <div class="body">
+        <?php
+        echo $this->formFactory()->structure([
+            ['order_id', 'day_id', 'excursion_id'],
+        ]);
+
+        /** @var \Orders\Model\Order $order */
+        if($order) echo '<div style="display: none;">'; 
+
+        echo $this->formFactory()->structure([
+            [
+                ['width' => 25, 'element' => $form->get('adults')],
+                ['width' => 25, 'element' => $form->get('children')],
+                ['width' => 25, 'element' => $form->get('lang_id')],
+                ['width' => 25, 'element' => $form->get('kp_lang')],
+            ],
+            [
+                ['width' => 25, 'element' => $form->get('agency')],
+                ['width' => 25, 'element' => $form->get('currency')],
+                ['width' => 25, 'element' => $form->get('currency_rate')],
+            ],
+        ])
+        ?>
+        <?php
+        $hotelAc = (new \Zend\Form\Element\Text('_', [
+            'label'   => 'Гостиница',
+        ]))->setAttributes([
+            'class' => 'std-input hotels-ac',
+        ]);
+        $hotelDaysCount = (new \Pipe\Form\Element\NumbersList('hotels[days_count]', [
+            'label'   => 'Кол-во дней',
+            'empty'   => 'Авторассчет',
+        ]))->setAttributes([
+            'class' => 'std-select',
+        ]);
+        ?>
+
+        <div class="hotels-form calc-accordion close">
+            <div class="header">Проживание</div>
+            <div class="body">
+                <?php
+                echo $this->formFactory()->structure([[
+                        ['width' => 70, 'element' => $hotelAc],
+                        ['width' => 30, 'element' => $hotelDaysCount],
+                ]]) ?>
+                <div class="list"></div>
+            </div>
+            <div class="hotel-details calc-details-box"></div>
+        </div>
+        <?php if($order) echo '</div>'; ?>
+
+        <script>
+            $(function () {
+                var hotelsForm = $('.hotels-form');
+                var list = $('.list', hotelsForm);
+
+                $('.hotels-ac', hotelsForm).autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            url: '/calc/hotels-autocomplete/',
+                            method: 'post',
+                            data: {
+                                query: request.term
+                            },
+                            success: function (data) {
+                                response(data);
+                            }
+                        });
+                    },
+                    minLength: 1,
+                    select: function (event, ui) {
+                        var item = ui.item;
+
+                        $.ajax({
+                            url: '/calc/add-hotel/',
+                            method: 'post',
+                            data: {
+                                hid: item.id
+                            },
+                            success: function (resp) {
+                                var newEl = $(resp.html);
+
+                                var sl = newEl.smartlist({
+                                    replace: function (name, index) {
+                                        return name.replace('_HID_', ui.item.id);
+                                    }
+                                });
+
+                                $('.header', newEl).on('click', '.del', function() {
+                                    $(this).closest('.hotel').remove();
+                                });
+
+                                sl.on('add', function (event, row) {
+                                    $('.hotel-room-id', row).on('change', function () {
+                                        var el = $(this);
+                                        var bedSelect = $('.hotel-room-bed', row);
+
+                                        if(el.val() === '') {
+                                            $('option', bedSelect).addClass('hide');
+                                            bedSelect.val('');
+                                            return;
+                                        }
+
+                                        $.ajax({
+                                            url: '/hotels/get-room-info/',
+                                            method: 'post',
+                                            data: {
+                                                rid: $(this).val()
+                                            },
+                                            success: function (resp) {
+                                                $('option', bedSelect).addClass('hide');
+                                                switch (resp.bed_size) {
+                                                    case '0':
+                                                        $('option', bedSelect).removeClass('hide');
+                                                        break;
+                                                    default:
+                                                        $('option[value="' + resp.bed_size + '"]', bedSelect).removeClass('hide');
+                                                        bedSelect.val(resp.bed_size);
+                                                        break;
+                                                }
+                                            }
+                                        });
+                                    }).trigger('change');
+                                });
+                                sl.addRow();
+                                newEl.appendTo(list);
+                            }
+                        });
+
+                        event.preventDefault();
+                    }
+                });
+
+            })
+        </script>
+
+        <div class="cols">
+            <div class="col-100"><?php echo $this->formCell($form->get('tours_autocomplete'), 'full'); ?></div>
+        </div>
+
+        <div class="tabs calc-tabs">
+            <div class="tabs-header">
+                <div class="tab add-tab"><i class="fas fa-plus"></i></div>
+            </div>
+            <div class="tabs-body"></div>
+        </div>
+
+        <div class="sum-details calc-details-box"></div>
+
+        <div class="btns">
+            <?php if($order) { ?>
+                <span class="btn order hidden">Обновить заказ</span>
+            <?php } else { ?>
+                <span class="btn order hidden">Добавить в задачи</span>
+                <span class="btn print hidden">Скачать или отправить</span>
+            <?php } ?>
+        </div>
+    </div>
+
+    <style>
+        .addition-settings {
+            margin-bottom: 1px;
+        }
+
+        .proposal-settings {
+            margin-bottom: 10px;
+        }
+
+        .addition-settings .switcher,
+        .proposal-settings .switcher {
+            color: #ffffff;
+            background: #3c74c7;
+            padding: 2px 10px;
+            cursor: pointer;
+        }
+
+        .addition-settings .body,
+        .proposal-settings .body {
+            padding-top: 8px;
+            display: none;
+        }
+    </style>
+
+    <script>
+        $(function() {
+            var form = $('.calc-form');
+
+            form.on('click', '.calc-accordion .header', function () {
+                var box  = $(this).parent();
+                var body = box.children('.body');
+                if(box.hasClass('close')) {
+                    body.slideDown(200);
+                } else {
+                    body.slideUp(200);
+                }
+                box.toggleClass('close');
+            });
+            $('.calc-accordion', form).each(function () {
+                if($(this).hasClass('close')) {
+                    $(this).children('.body').css({display: 'none'});
+                }
+            });
+
+            var tabs = new Tabs($('.tabs', form), {
+                addTab: function(tabs, tabNbr, intData) {
+                    var html = '';
+
+                    var data = $.pipe.serializeForm(form);
+                    data.tabNbr = tabNbr;
+                    data.date   = intData.date;
+
+                    $.ajax({
+                        url: '/calc/add-day/',
+                        type: 'post',
+                        async: false,
+                        data: data,
+                        success: function(resp) {
+                            html = resp.html;
+                        }
+                    });
+
+                    return {
+                        id:     'day-' + tabNbr,
+                        header: 'День ' + tabNbr,
+                        body:    html
+                    };
+                },
+                delTab: function(tabs, hTab, bTab) {
+                    calc();
+                },
+                onLoad: function(tab) {
+                    initElements(tab);
+                    initTab(tab);
+
+                    $('.proposal-settings .switcher, .addition-settings .switcher', tab).on('click', function () {
+                        $(this).parent().find('.body').slideToggle(200);
+                    });
+                }
+            });
+
+            $('.tours-ac', form).autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/calc/tours-autocomplete/',
+                        method: 'post',
+                        data: {
+                            query:  request.term,
+                            langId: $('[name="lang_id"]', form).val(),
+                            date:   {
+                                first: $('.date', tabs.getFirstTab().body).val(),
+                                last: $('.date', tabs.getLastTab().body).val(),
+                            }
+                        },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function (event, ui) {
+                    var item = ui.item;
+                    if(item.type === 'tour') {
+                        tabs.clear();
+                    }
+
+                    addHit('excursions', item.id);
+
+                    $.each(item.days, function(key, day) {
+                        var tab = null;
+                        if(item.type === 'tour') {
+                            tab = tabs.addTab().body;
+                        } else {
+                            tab = tabs.getActiveTab().body;
+                            clearMuseums(tab);
+                            clearTransports(tab);
+                        }
+
+                        $('.date', tab).val(day.date);
+                        $('.excursion_id', tab).val(day.excursion_id);
+                        $('.transfer_id', tab).val(day.transfer_id);
+                        $('.day-id', tab).val(day.day_id);
+                        $('.duration', tab).val('');
+                        $('.transfer_time', tab).val(day.transfer_time);
+                        $('.car_delivery_time', tab).val(day.car_delivery_time);
+                        $('.proposal_place_start', tab).val(day.proposal.place_start);
+                        $('.proposal_place_end', tab).val(day.proposal.place_end);
+                        $('.proposal_price', tab).val(day.proposal.price);
+
+                        $('.proposal_calc_pricetable, .proposal_calc_timetable, .extra_calc', tab).prop('checked', true);
+
+                        var el = $('.time_from', tab);
+                        var timeSelect = $.pipe.formElement('time', {
+                            class: el.attr('class'),
+                            min: day.min_time,
+                            max: day.max_time,
+                            name: el.attr('name'),
+                        });
+                        timeSelect.val(day.min_time);
+                        timeSelect.appendTo(el.parent());
+                        el.remove();
+
+                        $.each(day.museums, function(key, museum) {
+                            addMuseum(museum.id, {duration: museum.duration}, tab);
+                        });
+
+                        $('.transport-type', tab).val(2);
+                        $.each(day.transports, function(key, transport) {
+                            addTransport(
+                                transport.id,
+                                transport,
+                                tab
+                            );
+                        });
+                    });
+
+                    $(this).val('');
+                    event.preventDefault();
+                }
+            });
+            $('.tours-ac', form).focus().trigger('focus');
+
+            <?php
+            /** @var \Orders\Admin\Model\OrderDay $orderDay */
+            if($orderDay) {
+                $date = $orderDay->get('date')->format('d.m.Y');
+            } elseif($_GET['date']) {
+                $date = \Pipe\DateTime\Date::getDT($_GET['date'])->format('d.m.Y');
+            } else {
+                $date = date('d.m.Y');
+            }
+            ?>
+
+            tabs.addTab({date: '<?= $date ?>'});
+
+            function initTab(tab) {
+                transportBlock(tab);
+                museumsBlock(tab);
+
+                $('.proposal_pricetable, .proposal_timetable, .extra_list', tab).each(function() {
+                    $(this).smartlist().on('change', function (e, sl) {
+                        sl.el.closest('.body').find('input[type="checkbox"]').prop('checked', false);
+                        calc();
+                    });
+                });
+
+                tab.on('keyup change', 'select, input, textarea', function () {
+                    if($(this).closest('.smart-list').length) {
+                        return;
+                    }
+                    calc();
+                });
+            }
+
+            function transportBlock(tab) {
+                var transports = $('.transports', tab);
+
+                $('.transport-type', tab).on('change', function () {
+                    if ($(this).val() == 2) {
+                        $('.transport-form', tab).removeClass('hidden');
+                    } else {
+                        $('.transport-form', tab).addClass('hidden');
+                    }
+                });
+
+                transports.on('click', '.delete', function () {
+                    $(this).closest('.transport').remove();
+                    calc();
+                });
+
+                $('.transport-ac', tab).autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            url: '/transports/autocomplete/',
+                            data: {
+                                query: request.term
+                            },
+                            success: function (data) {
+                                response(data);
+                            }
+                        });
+                    },
+                    minLength: 1,
+                    select: function (event, ui) {
+                        addTransport(ui.item.id, {duration: 0, type: ui.item.type}, tab)
+                    }
+                });
+            }
+
+            function museumsBlock(tab) {
+                var museums = $('.museums', tab);
+
+                museums.on('click', '.close', function () {
+                    $(this).closest('.item').remove();
+                    calc();
+                });
+
+                museums.on('click', '.delete', function () {
+                    $(this).closest('.museum').remove();
+                    calc();
+                });
+
+                $('.museums-ac', tab).autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            url: '/calc/museums-autocomplete/',
+                            method: 'post',
+                            data: {
+                                query: request.term,
+                            },
+                            success: function (data) {
+                                response(data);
+                            }
+                        });
+                    },
+                    minLength: 1,
+                    select: function (event, ui) {
+                        var item = ui.item;
+
+                        addMuseum(item.id, {}, tab);
+
+                        $(this).val('');
+                        event.preventDefault();
+                    }
+                });
+            }
+
+            function clearTransports(tab) {
+                $('.transports', tab).empty();
+                calc();
+            }
+
+            function clearMuseums(tab) {
+                $('.museums', tab).empty();
+            }
+
+            var trCounter = 0;
+
+            function addTransport(transportId, options, tab) {
+                options = $.extend({
+                    type: 1,
+                    duration: ''
+                }, options);
+
+                var tabId = tab.data('tab-id');
+
+                $.ajax({
+                    url: '/transports/get-info/',
+                    method: 'post',
+                    data: {
+                        id: transportId
+                    },
+                    success: function (data) {
+                        trCounter++;
+                        var name = 'days[' + tabId + '][transports]';
+
+                        <?php
+                        $transferOpts = '{';
+                        foreach (\Transports\Admin\Model\Transfer::getEntityCollection() as $row) {
+                            $transferOpts .= $row->id() . ':' . '"' . str_replace('"', '', $row->get('name')) . '", ';
+                        }
+                        $transferOpts .= '}';
+                        ?>
+
+                        var el = $(
+                            '<div class="transport cols" data-calc="' + (data.id == 0 ? 'auto' : 'static') + '" data-type="' + options.type + '">' +
+                            '<input type="hidden" data-name="id" name="' + name + '[' + trCounter + '][id]" value="' + data.id + '">' +
+                            '<input type="hidden" name="' + name + '[' + trCounter + '][type]" value="' + options.type + '">' +
+                            '<div class="col-75">' +
+                                '<div class="info">' +
+                                    '<div data-name="title" class="title">' + data.name + ' ' + data.desc + '</div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="col-25 last">' +
+                                '<div class="duration">' +
+                                    $.pipe.formElement('time', {
+                                        empty: 'Длительность',
+                                        name: name + '[' + trCounter + '][duration]',
+                                        value: options.duration
+                                    }).prop('outerHTML') +
+                                    '<div class="delete"><i class="fa fa-times"></i></div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="clear"></div>' +
+                            '</div>');
+
+                        $('.transport-type', tab).val(2).trigger('change');
+                        el.appendTo($('.transports', tab));
+                        initElements(el);
+                    }
+                });
+            }
+
+            var msCounter = 0;
+
+            function addMuseum(museumId, options, tab) {
+                options = $.extend({
+                    duration: ''
+                }, options);
+
+                var tabId = tab.data('tab-id');
+
+                $.ajax({
+                    url: '/museums/get-info/',
+                    method: 'post',
+                    data: {
+                        id: museumId
+                    },
+                    success: function (data) {
+                        msCounter++;
+                        var name = 'days[' + tabId + '][museums]';
+                        var el = $(
+                            '<div class="museum cols">' +
+                                '<input type="hidden" name="' + name + '[' + msCounter + '][id]" value="' + data.id + '">' +
+                                '<div class="col-75">' +
+                                    '<div class="info">' +
+                                        '<div class="title">' + data.name + '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="col-25 last">' +
+                                    '<div class="duration">' +
+                                        $.pipe.formElement('time', {
+                                            empty: 'Длительность',
+                                            name: name + '[' + msCounter + '][duration]',
+                                            value: options.duration,
+                                        }).prop('outerHTML') +
+                                        '<div class="delete"><i class="fa fa-times"></i></div>' +
+                                    '</div>' +
+                                '</div>' +
+                                '<div class="clear"></div>' +
+                            '</div>');
+
+                        el.appendTo($('.museums', tab));
+                        initElements(el);
+                        calc();
+                    }
+                });
+            }
+
+            var btns = $('.btns', form);
+            
+            var updateFormTables = function() {
+                var data = $.pipe.serializeForm(form);
+                $.ajax({
+                    url: '/calc/',
+                    method: 'post',
+                    data: data,
+                    success: function (resp) {
+                        $.each(resp.days, function(dayId, dayData) {
+                            if(!dayData.day_id) return;
+
+                            var tabBody = $('.tabs-body .tab[data-tab-id="' + dayId + '"]', form);
+                            $.ajax({
+                                url: '/calc/proposal-data/',
+                                method: 'post',
+                                data: {
+                                    commonData: resp,
+                                    dayData: dayData,
+                                },
+                                success: function (propData) {
+                                    if ($('.proposal_calc_pricetable', tabBody).prop('checked') && propData.pricetable !== undefined) {
+                                        var sl = $('.proposal_pricetable', tabBody).smartlist().clear();
+                                        $.each(propData.pricetable, function (key, val) {
+                                            sl.addRow([val]);
+                                        });
+                                    }
+                                    if ($('.proposal_calc_timetable', tabBody).prop('checked') && propData.timetable !== undefined) {
+                                        var sl = $('.proposal_timetable', tabBody).smartlist().clear();
+                                        $.each(propData.timetable, function (key, val) {
+                                            sl.addRow([val.duration, val.name]);
+                                        });
+                                    }
+                                    if ($('.extra_calc', tabBody).prop('checked') && propData.extralist !== undefined) {
+                                        var sl = $('.extra_list', tabBody).smartlist().clear();
+                                        $.each(propData.extralist, function (key, val) {
+                                            sl.addRow([val.name, val.proposal_name, val.income, val.outgo]);
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        updateFormPrice();
+                    }
+                });
+            };
+
+            var calcTimer = null;
+            var calc = function () {
+                clearTimeout(calcTimer);
+                calcTimer = setTimeout(function () {
+                    updateFormTables();
+                }, 500);
+            };
+
+            var updateFormPrice = function() {
+                    var data = $.pipe.serializeForm(form);
+                    $.ajax({
+                        url: '/calc/',
+                        method: 'post',
+                        data: data,
+                        success: function (resp) {
+                            var details = calcDetails(resp)
+                            $('.hotel-details', form).html(details.hotels.html);
+                            $('.sum-details', form).html(details.html);
+
+                            var allErrors = 0;
+                            var dayErrors = 0;
+                            $.each(resp.days, function(dayId, dayData) {
+                                var dayDetails = details.days[dayId];
+                                var tabHeader = $('.tabs-header .tab[data-tab-id="' + dayId + '"]', form);
+                                var tabBody = $('.tabs-body .tab[data-tab-id="' + dayId + '"]', form);
+                                $('.day-details', tabBody).html(dayDetails.html);
+
+                                dayErrors = parseInt(dayDetails.errorsCount);
+                                allErrors += dayErrors;
+                                if(!dayErrors) {
+                                    tabHeader.removeClass('error');
+                                    tabBody.removeClass('error');
+                                } else {
+                                    tabHeader.addClass('error');
+                                    tabBody.addClass('error');
+                                }
+                            });
+
+                            if(allErrors) {
+                                $('.print, .order', btns).addClass('hidden');
+                            } else {
+                                $('.print, .order', btns).removeClass('hidden');
+                            }
+                        }
+                    });
+            };
+
+            $('.btn.calc', form).on('click', function () {
+                calc();
+            });
+
+            $('.print', form).on('click', function () {
+                $.fancybox.open({
+                    src: '/calc/proposal/'/* + $.pipe.serializeString(form)*/,
+                    type: 'ajax',
+                    opts: {
+                        ajax: {
+                            settings: {
+                                data : $.pipe.serializeForm(form),
+                                type : 'POST'
+                            }
+                        },
+                        afterLoad: function (e, slide) {
+                            initElements(slide.$slide);
+                        }
+                    }
+                });
+            });
+
+            $('.order', form).on('click', function () {
+                $.ajax({
+                    url: '/calc/order/',
+                    data: $.pipe.serializeForm(form),
+                    method: 'post',
+                    success: function(resp) {
+                        if(resp.id) {
+                            <?php echo(MODE == 'dev' && false ? 'dd("/orders/edit/" + resp.id + "/")' : 'location.href = "/orders/edit/" + resp.id + "/";') ?>
+                        }
+                    }
+                });
+            });
+
+            $('select, input, textarea', form).on('keyup change', function () {
+                var el = $(this);
+                if(el.hasClass('tours-ac')) return;
+
+                calc();
+            });
+
+            $('.hotels-form', form).on('keyup change', 'select, input, textarea', function () {
+                calc();
+            });
+        });
+    </script>
+</div>

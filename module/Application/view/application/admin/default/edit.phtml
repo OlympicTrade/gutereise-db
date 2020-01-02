@@ -1,0 +1,9 @@
+<?php
+/** @var \Pipe\Form\View\Helper\FormFactory $factory */
+$factory = $this->formFactory()->setForm($form);
+?>
+<?=
+$factory->open().
+$factory->structure($structure['form']).
+$factory->close();
+?>

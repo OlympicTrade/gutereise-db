@@ -1,0 +1,45 @@
+<?php
+$this->adminSidebar()->setOptions([
+    'preset' => '',
+    'items'  => [['preset' => 'search'], 'add' => ['class' => 'calc-open', 'icon' => 'far fa-calculator', 'label' => 'Калькулятор']],
+]);
+
+use Pipe\Calendar\Calendar;
+$calendar = new Calendar('orders');
+echo $this->calendar($calendar, [])->renderBase();
+?>
+<div class="panel orders-dbtll" style="display: none;">
+    <div class="table-list"></div>
+</div>
+
+<script>
+var calendar = $('#calendar-orders');
+
+calendar.calendar({
+    url: '/orders/get-calendar-page/',
+});
+
+calendar.on('click', '.day .body', function(e) {
+    var el = $(e.target);
+
+    if(el.hasClass('body')) {
+        $.fancybox.open({
+            src: '/calc/',
+            type: 'ajax',
+            smallBtn : true,
+            closeClickOutside: false,
+            opts: {
+                ajax: {
+                    settings: {
+                        data: {date: el.closest('.day').data('date')}
+                    }
+                },
+                afterLoad: function(e, slide) {
+                    initElements(slide.$slide);
+                }
+            }
+        });
+    }
+});
+
+</script>

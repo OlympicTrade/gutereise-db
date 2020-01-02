@@ -1,0 +1,71 @@
+<?php
+use Pipe\Calendar\Calendar;
+
+$this->sidebar()->setOptions([
+    'preset' => 'back',
+    'items' => [],
+]);
+
+$calendar = new Calendar('guide-profile');
+
+$defStatus = $guide->get('options')->calendar->status;
+
+$dsSelect = new \Zend\Form\Element\Select('_', ['options' => [
+    'free' => 'Дни свободны',
+    'busy' => 'Дни заняты',
+]]);
+
+$dsSelect->setAttributes([
+    'class' => 'default-status std-select'
+])->setValue($defStatus);
+
+echo $this->calendar($calendar, [
+    'class'    => 'short',
+    'controls' => ['html' => $this->formElement($dsSelect)],
+])->renderBase();
+?>
+
+<script>
+    var calendar = $('#calendar-guide-profile');
+    var guideId = '<?php echo $guideId ?>';
+
+    calendar.calendar({
+        url: '/guides/calendar/get-calendar-page/' + guideId + '/',
+        initControls: function (controls) {
+            $('.default-status', controls).on('change', function () {
+                $.ajax({
+                    url: '/guides/calendar/set-default-status/' + guideId + '/',
+                    data: {
+                        status: $(this).val()
+                    },
+                    method: 'post',
+                    success: function () {
+                        location.reload();
+                    }
+                });
+            });
+        },
+        initPage: function (page) {
+            $('.day', page).on('dblclick', function () {
+                var day = $(this);
+
+                if(day.hasClass('disabled')) return;
+
+                var status = day.attr('data-status') == 'free' ? 'busy' : 'free';
+
+                day.attr('data-status', status);
+
+                $.ajax({
+                    url: '/guides/calendar/set-day-busyness/' + guideId + '/',
+                    data: {
+                        guide_id: guideId,
+                        date:     day.data('date'),
+                        status:   status
+                    },
+                    method: 'post',
+                    success: function () {}
+                });
+            });
+        }
+    });
+</script>

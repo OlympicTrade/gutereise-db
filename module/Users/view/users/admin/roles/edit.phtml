@@ -1,0 +1,22 @@
+<form action="" method="post" class="table-edit table-edit-roles std-form" data-module="<?php echo $module ?>" data-section="<?php echo $section ?>">
+    <?php
+    $this->sidebar()->addItems([
+        [],
+        ['class' => 'blue', 'icon' => 'fas fa-users', 'label' => 'Пользователи', 'url' => '/users/'],
+    ]) ?>
+    <?php echo $this->formInput($form->get('id')); ?>
+
+    <fieldset>
+        <legend>Основные параметры</legend>
+        <?php
+        echo $this->formRowset([[
+            ['width' => 70, 'element' => $form->get('name')],
+        ]], $form);
+        ?>
+    </fieldset>
+
+    <fieldset>
+        <legend>Доступ</legend>
+        <?php echo $this->formElement($form->get('rights')); ?>
+    </fieldset>
+</form>

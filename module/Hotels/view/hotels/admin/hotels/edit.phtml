@@ -1,0 +1,95 @@
+<?php
+/** @var \Pipe\Form\View\Helper\FormFactory $factory */
+$factory = $this->formFactory()->setForm($form);
+
+$roomsTabs = [];
+$d = 0;
+foreach($hotel->rooms() as $room) {
+    $roomsTabs[] = [
+        'header' => 'Номер ' . ++$d,
+        'body'   => [
+            ['type' => 'html', 'html' => $this->hotelRoomForm($room)]
+        ],
+    ];
+}
+?>
+
+<?=
+$factory->open().
+$factory->structure([
+    ['id'],
+    [
+        'type'     => 'panel',
+        'name'     => 'Основные параметры',
+        'children' => [
+            ['type' => 'preset', 'name' => 'basic']
+        ],
+    ],
+    [
+        'type'     => 'panel',
+        'name'     => 'Завтрак',
+        'children' => 'breakfast',
+    ],
+    [
+        'type'     => 'tabs',
+        'tabs'     => $roomsTabs,
+    ],
+    [
+        'type'     => 'panel',
+        'name'     => 'Основные параметры',
+        'children' => 'company_details',
+    ],
+]);
+?>
+
+<script>
+    var form = $('.table-edit-hotel');
+
+    var tabs = $('.hotels-rooms-tabs', form).tabs({
+        initTab: function(tab) {
+
+        },
+        addTab: function(tabs, tabNbr) {
+            var html = '';
+            $.ajax({
+                url: '/hotels/add-room/',
+                method: 'post',
+                async: false,
+                data: {
+                    hid: $('[name="id"]', form).val()
+                },
+                success: function(resp) {
+                    html = resp.html;
+                }
+            });
+
+            return {
+                id:     'room-' + tabNbr,
+                header: 'Номер ' + tabNbr,
+                body:    html,
+            };
+        },
+        delTab: function(tabs, hTab, bTab) {
+            $.ajax({
+                url: '/hotels/del-room/',
+                method: 'post',
+                async: false,
+                data: {
+                    rid: $('.room-id', bTab).val()
+                },
+                success: function(resp) {
+
+                }
+            });
+        },
+        onLoad: function(tab) {
+            initElements(tab);
+			$('.short-form', tab).dbShortTables();
+        }
+    });
+    <?php if(!$hotel->rooms()->load()) { ?>
+    tabs.addTab();
+    <?php } ?>
+</script>
+
+<?= $factory->close(); ?>

@@ -1,0 +1,735 @@
+<?php
+use Orders\Admin;
+$factory = $this->formFactory()->setForm($form);
+
+switch ($order->plugin('gcalendar')->syncStatus()) {
+    case Admin\Model\OrderGCalendar::SYNC_SUCCESS:
+        $calendarColor = 'green';
+        break;
+    case  Admin\Model\OrderGCalendar::SYNC_FAIL:
+        $calendarColor = 'red';
+        break;
+    default:
+        $calendarColor = 'blue';
+}
+
+$this->adminSidebar()->addItems([
+    [],
+    ['class' => 'group', 'icon' => 'far fa-file-alt', 'label' => 'Ком. предл.', 'attrs' => ['data-group' => 'proposal']],
+    ['class' => 'group', 'icon' => 'far fa-calendar-alt', 'label' => 'Расписание', 'attrs' => ['data-group' => 'days']],
+    ['class' => 'group', 'icon' => 'fas fa-user-friends', 'label' => 'Клиенты', 'attrs' => ['data-group' => 'clients']],
+    [],
+    ['class' => 'order-email-delivery', 'icon' => 'far fa-envelope', 'label' => 'Рассылка'],
+    ['class' => 'order-google-calendar', 'icon' => 'fab fa-google', 'label' => 'GCalendar'],
+    ['class' => 'order-documents', 'icon' => 'fas fa-file-contract', 'label' => 'Документы'],
+]); ?>
+
+<form action="" method="post" class="table-edit table-edit-order std-form order-form" data-module="<?= $module ?>" data-section="<?= $section ?>">
+
+<div class="errors-flag"><i class="fas fa-exclamation-triangle"></i> В форме заказа допущены ошибки</div>
+<input type="hidden" name="errors">
+
+<style>
+
+</style>
+
+<div class="std-errors order-errors"></div>
+
+<div class="order-group group-proposal">
+    <div class="panel proposal-opts">
+        <?=
+        $this->formFactory()->structure([
+            [
+                ['width' => 70, 'children' => [
+                    'options' => ['row' => false],
+                    'options[proposal][autocalc]',
+                    'options[proposal][generalize]',
+                ]],
+                ['width' => 30, 'type' => 'html', 'html' =>
+                    '<label><span>Язык:</span> '.
+                    $this->formElement($form->get('options[proposal][lang]')).
+                    '</label>'
+                ],
+            ]
+        ]);
+        ?>
+        <div class="proposal-text std-text"><?= $order->proposal ?></div>
+        <div class="proposal-editor">
+        <?= $this->formElement($form->get('proposal')) ?>
+        </div>
+    </div>
+</div>
+
+<div class="order-group group-clients">
+    <?php
+    echo $factory->structure([
+        ['id', 'income', 'outgo'],
+        [
+            'type'   => 'panel',
+            'name'   => 'Клиенты',
+            'children' => [
+                [
+                    ['width' => 60, 'element' => 'name'],
+                    ['width' => 40, 'element' => 'options[color]'],
+                ],
+                [
+                    ['width' => 25, 'element' => 'status'],
+                    ['width' => 25, 'element' => 'manager_id'],
+                    ['width' => 25, 'element' => 'agency'],
+                    ['width' => 25, 'element' => 'lang_id'],
+                    //['width' => 25, 'element' => 'margin'],
+                ],
+                [
+                    ['width' => 25, 'element' => 'adults'],
+                    ['width' => 25, 'element' => 'children'],
+                    ['width' => 25, 'element' => 'options[currency][currency]'],
+                    ['width' => 25, 'element' => 'options[currency][rate]'],
+                ],
+                [
+                    'type' => 'html', 'html' =>
+                    '<div class="row">'.
+                        '<div class="summary">'.
+                            '<div class="income">Доход: <span>' . $order->get('income') . '</span></div> '.
+                            '<div class="outgo">Расход: <span>' . $order->get('outgo') . '</span></div> '.
+                            '<div class="profit">Прибыль: <span>' . $order->get('profit') . '</span></div> '.
+                            '<div>'.
+                                'Авторассчет: '.
+                                '<span class="btn sm autocalc-unfix">Вкл</span> '.
+                                '<span class="btn sm autocalc-fix">Выкл</span> '.
+                                '<span class="status"></span>'.
+                            '</div>'.
+                        '</div>'.
+                    '</div>'
+                ],
+            ],
+        ],
+        [
+            'type' => 'html', 'html' =>
+            '<div class="row">'.
+            '<div class="sum-details calc-details-box"></div>'.
+            '</div>'
+        ],
+        [
+            'type'   => 'panel',
+            'name'   => 'Клиенты',
+            'children' => ['clients'],
+        ],
+        [
+            'type'   => 'panel',
+            'name'   => 'Проживание',
+            'attrs'  => ['data-anchor' => 'hotels'],
+            'children' => [
+                ['type' => 'html', 'html' =>
+                    '<div class="hotels-details calc-details-box"></div>'
+                ],
+                ['type' => 'html', 'html' =>
+                    '<div class="row">' . $this->formCell($form->get('options[hotels][days_count]')) . '</div>'
+                ],
+                'hotels',
+            ],
+        ],
+    ]);
+    ?>
+</div>
+
+<div class="order-group group-days">
+    <?php
+    $days = $order->plugin('days');
+
+    $html =
+        '<div class="tabs order-days-tabs">' .
+        '<div class="tabs-header">';
+
+    $d = 0;
+    foreach($days as $day) {
+        $d++;
+        $html .=
+            '<div class="tab" data-tab="' . $day->date . '">День ' . $d . '</div>';
+    }
+
+    $html .=
+        '<div class="tab add-tab"><i class="fas fa-plus"></i></div>'.
+        '</div>'.
+        '<div class="tabs-body">';
+
+    $d = 0;
+    foreach($days as $day) {
+        $d++;
+        $html .=
+            '<div class="tab" data-tab="' . $day->date . '">' . $this->orderDayForm($day) . '</div>';
+    }
+
+    $html .=
+        '</div>'.
+        '</div>';
+
+    echo $html;
+    ?>
+</div>
+
+<script>
+    var form = $('.table-edit-order');
+    var sidebar = $('#nav .module');
+
+    //
+
+    $('[name="options[proposal][autocalc]"]', form).on('change', function () {
+        if($(this).is(':checked')) {
+            $('.proposal-text').css({display: 'block'});
+            $('.proposal-editor').css({display: 'none'});
+        } else {
+            $('.proposal-text').css({display: 'none'});
+            $('.proposal-editor').css({display: 'block'});
+        }
+    }).trigger('change');
+
+    $(function() {
+        var body = $('body');
+        var editorHeight =
+            $(window).height() - parseInt(body.css('padding-top')) - parseInt(body.css('padding-bottom'))
+            - parseInt($('.proposal-opts', form).css('padding-bottom'))
+            - 100;
+
+        CKEDITOR.on('instanceLoaded', function (e) {
+            if (e.editor.name == 'proposal') {
+                e.editor.resize('100%', editorHeight);
+            }
+        });
+    });
+
+    $('.group', sidebar).on('click', function () {
+        var btn = $(this);
+
+        form.children('.group-' + btn.data('group'))
+            .css({display: 'block'})
+            .siblings('.order-group')
+            .css({display: 'none'});
+    });
+
+    form.on('dblclick', function () {
+        $('[data-group="proposal"]', sidebar).trigger('click');
+        window.scrollTo(0, 0);
+    });
+
+    $('.proposal-text', form).on('click', '[data-link]', function() {
+        var el = $(this);
+        if(el.data('link') === undefined) {
+            return;
+        }
+
+        var params = {};
+        var data = $(this).data('link').split('|');
+        for (i = 0; i < data.length; i++) {
+            var tmp = data[i].split(':');
+            params[tmp[0]] = tmp[1];
+        }
+
+
+        if(params.day) {
+            params.group = 'days';
+            $('.order-days-tabs > .tabs-header > .tab[data-tab="' + params.day + '"]', form).trigger('click');
+            var day = $('.order-days-tabs > .tabs-body > .tab[data-tab="' + params.day + '"]', form);
+        }
+
+        $('[data-group="' + params.group + '"]', sidebar).trigger('click');
+
+        if(params.tab) {
+            $('.order-day-tabs > .tabs-header > .tab[data-tab="' + params.tab + '"]', form).trigger('click');
+        }
+
+        if(params.anchor) {
+            $.pipe.scrollTo(
+                $('[data-anchor="' + params.anchor + '"]',
+                    day ? day : form.children('.group-' + params.group)),
+                400,
+                {offsetTop: -10}
+            );
+        } else {
+            window.scrollTo(0, 0);
+        }
+    });
+
+    var updateSelect = function(select, items) {
+        $('option', select).css({background: '#fcaca7'});
+        select.css({background: '#fcaca7'});
+
+        var cVal = select.val();
+        $.each(items, function(key, val) {
+            var option = $('[value="' + val.id + '"]', select);
+
+            if(!val.status) {
+                if(val.id == cVal) select.css({background: '#fcda99'});
+                option.css({background: '#fcda99'});
+            } else {
+                if(cVal == val.id) select.css({background: '#8bcea4'});
+                option.css({background: '#8bcea4'});
+            }
+        });
+
+        if(cVal == '') select.css({background: '#fcda99'});
+    };
+
+    var selectColor = function (tab) {
+        tab.on('change', '[data-field="guide_id"], [data-field="driver_id"]', function () {
+            var select = $(this);
+            select.css({background: $('[value="' + $(this).val() + '"]', select).css('background')});
+        });
+    };
+
+    var updateGuides = function(tab) {
+        var museumsIds = [];
+
+        $('.museums-short-form .table [data-field="museum_id"]', tab).each(function() {
+            museumsIds.push($(this).val());
+        });
+
+        $.ajax({
+            url: '/guides/get-guides/',
+            method: 'post',
+            data: {
+                lang_id: $('[name="lang_id"]', form).val(),
+                date: $('[data-field="date"]', tab).val(),
+                museums_ids: museumsIds
+            },
+            success: function(resp) {
+                updateSelect($('.guide-id', tab), resp.items);
+            }
+        });
+    };
+
+    var updateTransport = function(tab) {
+        $('.transports-short-form .table  [data-field="transport_id"]', tab).each(function() {
+            updateDrivers($(this));
+        });
+    };
+
+    var updateDrivers = function(transportSelect) {
+        $.ajax({
+            url: '/drivers/get-drivers/',
+            method: 'post',
+            data: {
+                transport_id: transportSelect.val()
+            },
+            success: function(resp) {
+                updateSelect($('[data-field="driver_id"]', transportSelect.closest('.item')), resp.items);
+            }
+        });
+    };
+
+    $('.hotels-short-form', form).on('change', '.hotel-id', function() {
+        var hotelSelect = $(this);
+        $.ajax({
+            url: '/hotels/get-hotel-info/',
+            method: 'post',
+            data: {
+                hid: $(this).val()
+            },
+            success: function(resp) {
+                var row = hotelSelect.closest('.item');
+                var roomsSelect = $('.room-id', row);
+
+                var bfSelect = $('.breakfast', row);
+                var bfVal = bfSelect.val();
+                bfSelect.empty();
+
+                $.each(resp.breakfast, function(key, val) {
+                    $('<option value="' + key + '">' + val + '</option>').appendTo(bfSelect);
+                });
+                bfSelect.val(bfVal);
+
+                $('option', roomsSelect).addClass('hide');
+                $(resp.rooms).each(function (key, val) {
+                    $('option[value="' + val.id + '"]', roomsSelect)
+                        .removeClass('hide')
+                        .attr('data-bed_size', val.bed_size);
+                });
+                if($('option[value="' + roomsSelect.val() + '"]', roomsSelect).hasClass('hide')) {
+                    roomsSelect.val('');
+                }
+            }
+        });
+    });
+
+    initTab = function(tab) {
+        $('.short-form', tab).each(function () {
+            var st = $(this).dbShortTables();
+            st.on('update', function () {
+                checkErrors();
+            });
+        });
+
+        //selectColor(tab);
+
+        $('.tabs-header > .tab[data-tab="guides"]', tab).on('click', function () {
+            updateGuides(tab);
+        });
+
+        $('.tabs-header > .tab[data-tab="transports"]', tab).on('click', function () {
+            updateTransport(tab);
+        });
+
+        tab.on('change', '[data-field="transport_id"]', function () {
+            updateDrivers($(this));
+        });
+
+        $('.guides-short-form', tab).on('click', '.item-add', function() {
+            $('[name="lang_id"]', form).trigger('change');
+        });
+        $('[name="lang_id"]', form).trigger('change');
+
+        $('.pricetable-short-form, .timetable-short-form, .extra-short-form, .museums-short-form, ' +
+            '.transports-short-form, .guides-short-form', tab).addClass('autocalc-short-form');
+
+        $('.autocalc-short-form', tab).each(function() {
+            $(this).dbShortTables().on('change', function (e, st) {
+                st.box.closest('fieldset').find('input[type="checkbox"]').prop('checked', false);
+                checkErrors();
+            });
+        });
+
+        tab.on('keyup change', $('select, input, textarea', tab), function () {
+            if($(this).closest('.autocalc-short-form').length) return;
+            checkErrors();
+        });
+    };
+
+    var tabs = $('.tabs-body .tab', form);
+
+    function updateProposal(tabs, formData) {
+        if(!$('.autocalc-proposal', form).is(':checked')) {
+            return;
+        }
+
+        $.ajax({
+            url: '/orders/calc-proposal/',
+            method: 'post',
+            data: formData,
+            success: function(resp) {
+                var proposalGroup = form.children('.group-proposal');
+                $('.proposal-text', proposalGroup).html(resp.html);
+
+                CKEDITOR.remove(CKEDITOR.instances['proposal']);
+                $('#cke_proposal', proposalGroup).remove();
+                //CKEDITOR.instances['proposal'].remove();
+                //CKEDITOR.instances['proposal'].remove();
+                $('textarea', proposalGroup).val(resp.html);
+
+                //CKEDITOR.instances['proposal'].setData(resp.html);
+                setTimeout(function () {
+                    initTextEditor(proposalGroup);
+                }, 50);
+            }
+        });
+    }
+
+    $('[name="lang_id"]', form).on('change', function() {
+        /*tabs.each(function () {
+            updateGuidesRow($(this));
+        });*/
+    });
+
+    var checkTimer = null;
+    function checkErrors() {
+        clearTimeout(checkTimer);
+        checkTimer = setTimeout(function () {
+            //return;
+            var formData = form.serializeArray();
+
+            $.ajax({
+                url: '/orders/check/',
+                method: 'post',
+                data: formData,
+                success: function (resp) {
+                    var details = calcDetails(resp);
+
+                    $('.sum-details', form).html(details.html);
+                    $('.hotels-details', form).html(details.hotels.html);
+
+                    $.each(resp.days, function (dayId, dayData) {
+                        var dayDetails = details.days[dayId];
+                        var tabHeader = $('.order-days-tabs > .tabs-header > .tab[data-tab="' + dayData.date + '"]', form);
+                        var tabBody = $('.order-days-tabs > .tabs-body > .tab[data-tab="' + dayData.date + '"]', form);
+
+                        $('.day-details', tabBody).html(dayDetails.html);
+
+                        if(parseInt(dayDetails.errorsCount)) {
+                            tabHeader.addClass('error');
+                            tabBody.addClass('error');
+                        } else {
+                            tabHeader.removeClass('error');
+                            tabBody.removeClass('error');
+
+                            if(parseInt(dayDetails.orderErrorsCount)) {
+                                tabHeader.addClass('notice');
+                                tabBody.addClass('notice');
+                            } else {
+                                tabHeader.removeClass('notice');
+                                tabBody.removeClass('notice');
+                            }
+                        }
+
+                        if ($('.proposal_calc_pricetable', tabBody).prop('checked') && dayData.proposal.pricetable.list !== undefined) {
+                            var st = $('.pricetable-short-form', tabBody).dbShortTables().clear({triggers: []});
+                            $.each(dayData.proposal.pricetable.list, function (key, val) {
+                                st.addItem([val], {triggers: []});
+                            });
+                        }
+
+                        if ($('.proposal_calc_timetable', tabBody).prop('checked') && dayData.proposal.timetable.list !== undefined) {
+                            var st = $('.timetable-short-form', tabBody).dbShortTables().clear({triggers: []});
+                            $.each(dayData.proposal.timetable.list, function (key, val) {
+                                st.addItem([val.duration, val.name], {triggers: []});
+                            });
+                        }
+
+                        if ($('.extra_autocalc', tabBody).prop('checked') && dayData.extra.list !== undefined) {
+                            var st = $('.extra-short-form', tabBody).dbShortTables().clear({triggers: []});
+                            $.each(dayData.extra.list, function (key, val) {
+                                st.addItem([val.name, val.proposal_name, val.income, val.outgo], {triggers: []});
+                            });
+                        }
+
+                        if ($('.autocalc-transports', tabBody).prop('checked') && dayData.transports.list !== undefined) {
+                            var st = $('.transports-short-form', tabBody).dbShortTables().clear({triggers: []});
+                            $.each(dayData.transports.list, function (key, val) {
+                                st.addItem([val.id, val.driver_id, val.duration, val.count/*, val.income, val.outgo*/], {triggers: [], after: function (row) {
+                                        //updateTransportRow(row.find('.transport-id'));
+                                    }});
+                            });
+                        }
+
+                        if ($('.autocalc-guides', tabBody).prop('checked') && dayData.guides.list !== undefined) {
+                            var st = $('.guides-short-form', tabBody).dbShortTables().clear({triggers: []});
+                            $.each(dayData.guides.list, function (key, val) {
+                                st.addItem([val.guide_id, val.duration/*, val.income, val.outgo*/], {triggers: [], after: function (row) {
+                                        //updateGuidesRow(row);
+                                    }});
+                            });
+                        }
+                    });
+
+                    $('[name="errors"]', form).val((details.errorsCount + details.orderErrorsCount) > 0 ? 1 : 0);
+
+                    var summary = $('.summary, .proposal-opts', form);
+                    $('.income span', summary).html('<b>' + $.pipe.price(resp.summary.rub.income) + '</b>');
+                    $('.outgo span', summary).html('<b>' + $.pipe.price(resp.summary.rub.outgo) + '</b>');
+                    $('.profit span', summary).html('<b>' + $.pipe.price(parseInt(resp.summary.rub.income) - parseInt(resp.summary.rub.outgo)) + '</b>');
+
+                    $('[name="income"]', form).val(resp.summary.rub.income);
+                    $('[name="outgo"]', form).val(resp.summary.rub.outgo);
+
+                    updateProposal(tabs, form.serializeArray());
+                }
+            });
+        }, 400);
+    }
+
+    $('input, select, textarea', form).on('keyup change', function() {
+        if($(this).closest('.short-form [type="checkbox"]').length) return;
+        checkErrors();
+    });
+
+    $('.order-days-tabs', form).tabs({
+        initTab: function(tab) {
+            $('.order-day-tabs', tab).tabs({
+                relatedTabs: '.order-day-tabs',
+                initTab: function (tab) {}
+            });
+            initTab(tab);
+        },
+        addTab: function(tabs, tabNbr) {
+            var html = '';
+            $.ajax({
+                url: '/orders/add-day/',
+                method: 'post',
+                async: false,
+                data: {
+                    orderId: $('[name="id"]', form).val()
+                },
+                success: function(resp) {
+                    html = resp.html;
+                }
+            });
+
+            return {
+                id:     'day-' + tabNbr,
+                header: 'День ' + tabNbr,
+                body:    html,
+            };
+        },
+        delTab: function(tabs, hTab, bTab) {
+            $.ajax({
+                url: '/orders/del-day/',
+                method: 'post',
+                async: false,
+                data: {
+                    dayId: $('.day-id', bTab).val()
+                },
+                success: function(resp) {
+
+                }
+            });
+        },
+        onLoad: function(tab) {
+            initElements(tab);
+            $('.short-form', tab).dbShortTables();
+        }
+    });
+
+    $('.order-email-delivery', sidebar).on('click', function() {
+        $.fancybox.open({
+            src: '/orders/emails/',
+            type: 'ajax',
+            smallBtn : true,
+            closeClickOutside: false,
+            opts: {
+                ajax: {
+                    settings: {
+                        type: "post",
+                        data: form.serializeArray()
+                    }
+                }
+            }
+        });
+    });
+
+    $('.day-recalc', form).on('click', function() {
+        $.fancybox.open({
+            src: '/calc/',
+            type: 'ajax',
+            smallBtn : true,
+            closeClickOutside: false,
+            opts: {
+                ajax: {
+                    settings: {
+                        type: 'get',
+                        data: {
+                            oid: <?php echo $order->id() ?>,
+                            did: $(this).data('did')
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+    $('.order-google-calendar', sidebar).on('click', function() {
+        $.fancybox.open({
+            src: '/orders/google-calendar/',
+            type: 'ajax',
+            smallBtn : true,
+            closeClickOutside: false,
+            opts: {
+                ajax: {
+                    settings: {
+                        type: 'post',
+                        data: {
+                            oid: <?php echo $order->id() ?>,
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+    $('.order-documents', sidebar).on('click', function() {
+        $.fancybox.open({
+            src: '/orders/documents/',
+            type: 'ajax',
+            smallBtn : true,
+            closeClickOutside: false,
+            opts: {
+                ajax: {
+                    settings: {
+                        type: 'post',
+                        data: {
+                            oid: <?php echo $order->id() ?>,
+                        }
+                    }
+                },
+                afterLoad: function(e, slide) {
+                    initElements(slide.$slide);
+                }
+            }
+        });
+    });
+
+    $('.autocalc-unfix', form).on('click', function() {
+        $(this).parent().find('.status').text('Включен');
+
+        $('input.autocalc', form).prop('checked', true);
+
+        $('.currency_rate', form).val('');
+
+        $('.income, .outgo', $('.guides-short-form', tabs)).val('');
+        $('.income, .outgo', $('.transports-short-form', tabs)).val('');
+        $('.tickets_adults, .tickets_children, .guides, .outgo, .extra', $('.museums-short-form', tabs)).val('');
+    });
+
+    $('.autocalc-fix', form).on('click', function() {
+        $(this).parent().find('.status').text('Цены зафиксированы');
+
+        $.ajax({
+            url: '/orders/check/',
+            method: 'post',
+            data: form.serializeArray(),
+            success: function (resp) {
+                if(resp.currency.currency !== 'rub') {
+                    $('.currency_rate', form).val(resp.currency.rate);
+                }
+
+                $.each(resp.days, function (dayId, dayData) {
+                    var tabBody = $('.order-days-tabs > .tabs-body > .tab[data-tab="' + dayId + '"]', form);
+                    var i, item;
+
+                    if(dayData.guides.list.length) {
+                        var guides = dayData.guides;
+
+                        i = 0;
+                        $.each(guides.list, function(key ,guide) {
+                            item = $('.guides-short-form .list .item:eq(' + i + ')', tabBody);
+                            item.find('.income').val(guide.income);
+                            item.find('.outgo').val(guide.outgo);
+                            i++;
+                        });
+                    }
+
+                    if(dayData.transports.list.length) {
+                        var transports = dayData.transports;
+
+                        i = 0;
+                        $.each(transports.list, function(key ,transport) {
+                            item = $('.transports-short-form .list .item:eq(' + i + ')', tabBody);
+                            item.find('.income').val(transport.income);
+                            item.find('.outgo').val(transport.outgo);
+                            i++;
+                        });
+                    }
+
+                    if(dayData.museums.list.length) {
+                        var museums = dayData.museums;
+
+                        i = 0;
+                        $.each(museums.list, function(key ,museum) {
+                            item = $('.museums-short-form .list .item:eq(' + i + ')', tabBody);
+                            item.find('.tickets_adults').val(museum.tickets_adults);
+                            item.find('.tickets_children').val(museum.tickets_children);
+                            item.find('.guides').val(museum.guides);
+                            item.find('.outgo').val(museum.outgo);
+
+                            var extraIncome = 0;
+                            $.each(museum.extra, function(key ,extra) {
+                                extraIncome += parseInt(extra.income);
+                            });
+                            item.find('.extra').val(extraIncome);
+                            i++;
+                        });
+                    }
+                });
+
+                $('input.autocalc', form).prop('checked', false);
+            }
+        });
+    });
+</script>
+</form>

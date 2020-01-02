@@ -1,0 +1,45 @@
+<?php echo $this->doctype(); ?>
+<?php
+$escaper = new Zend\Escaper\Escaper('utf-8');
+?>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=400">
+        <title>Авторизация</title>
+
+        <?php
+        echo $this->headLink(['rel' => 'shortcut icon', 'href' => '/images/favicon.ico'])
+            ->prependStylesheet('/css/libs/login.css')
+            ->prependStylesheet('/css/libs/reset.css')
+            ->prependStylesheet('/fonts/fonts.css');
+        ?>
+
+        <?php
+        echo $this->headScript()->prependFile('//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+        ?>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="login-box">
+                <div class="header">
+                    Gute Reise DB
+                </div>
+                <div class="body">
+                    <div class="form-msg"><?php echo $this->formMsg ?></div>
+                    <form action="/login/" method="post">
+                        <div class="row">
+                            <input type="text" value="<?php echo $escaper->escapeHtml($this->form->get('login')->getValue()) ?>" name="login" placeholder="Логин" class="std-input">
+                        </div>
+                        <div class="row">
+                            <input type="password" name="password" placeholder="Пароль" class="std-input">
+                        </div>
+                        <div class="row">
+                            <input type="submit" value="Войти" class="btn">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,211 @@
+<div class="std-popup popup-order-gcalendar">
+    <div class="header">
+        <i class="far fa-calendar-alt"></i> Google Calendar
+    </div>
+    <form class="body std-form">
+        <div class="success-box">
+            <div class="msg">Настройки обновлены</div>
+            <span class="btn" data-fancybox-close>Закрыть</span>
+        </div>
+        <div class="form-box">
+            <?php
+            switch ($order->plugin('gcalendar')->syncStatus()) {
+                case \Orders\Admin\Model\OrderGcalendar::SYNC_SUCCESS:
+                    $status = 'Последняя синхронизация прошла успешно';
+                    break;
+                case \Orders\Admin\Model\OrderGcalendar::SYNC_FAIL:
+                    $status = 'Синхронизация не выполнена';
+                    break;
+                default:
+                    $status = 'Синхронизация не включена';
+            }
+            echo '<div class="status">' . $status . '</div>';
+            ?>
+
+            <input type="hidden" name="type" value="save">
+            <input type="hidden" name="oid" value="<?php echo $order->id() ?>">
+            <input type="hidden" name="id" value="<?php echo $gcalendar->id() ?>">
+            <input type="hidden" name="depend" value="<?php echo $order->id() ?>">
+
+            <?php
+            $html =
+                '<div class="list">';
+
+            foreach ($emails as $id => $email) {
+                $prefix = 'emails[ecollection][' . $id . ']';
+                $html .=
+                    '<div class="row">'.
+                        '<input type="hidden" data-field="email" name="' . $prefix . '[email]" value="' . $email['email'] . '">'.
+                        '<div class="name">' . $email['name'] . '</div>'.
+                        '<input type="hidden" name="' . $prefix . '[active]" value="0">'.
+                        '<input class="check" type="checkbox" name="' . $prefix . '[active]" value="1" ' . ($email['active'] ? 'checked' : '') . '>'.
+                    '</div>';
+            }
+
+            $html .=
+                '</div>';
+
+            echo $html;
+            ?>
+
+            <div class="list-form">
+                <div class="name"><input type="text" placeholder="Дополнительный e-mail"></div>
+                <span class="btn add-row">Добавить</span>
+            </div>
+
+            <span class="btn save">Сохранить</span>
+
+            <?php
+            $select = new \Zend\Form\Element\Select('active', [
+                'options' => [
+                    0 => 'Синхронизация выключена',
+                    1 => 'Синхронизация включена',
+                ],
+            ]);
+            $select->setAttributes([
+                'class' => 'std-select sync-select',
+            ]);
+            $select->setValue($gcalendar->get('active'));
+            echo $this->formElement($select);
+            ?>
+
+        </div>
+    </form>
+
+    <script>
+        $(function () {
+            var box = $('.popup-order-gcalendar');
+            var list = $('.list', box);
+
+            $('.save', box).on('click', function () {
+                var btn = $(this);
+                btn.html('<i class="fas fa-spinner fa-spin"></i>');
+
+                $.ajax({
+                    url: '/orders/google-calendar/',
+                    method: 'post',
+                    data: $('form', box).serializeArray(),
+                    success: function(resp) {
+                        if(resp.status == 1) {
+                            $('.form-box').css('display', 'none');
+                            $('.success-box').css('display', 'block');
+                        } else {
+                            alert('Ошиюка синхронизации');
+                        }
+                    }
+                });
+            });
+
+            $('.list-form .add-row', box).on('click', function () {
+                var input = $(this).closest('.list-form').find('input');
+
+                var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+                var errors = false;
+                var emailLC = input.val().toLowerCase();
+                if(!re.test(emailLC)) {
+                    alert('Неверно введен E-mail');
+                    errors = true;
+                }
+
+                $('[data-field="email"]', list).each(function () {
+                    if($(this).val().toLowerCase() == emailLC) {
+                        alert('Такой e-mail уже присутствует');
+                        errors = true;
+                    }
+                });
+                if(errors) return false;
+
+                var i = $('.row', list).length + 1;
+                var email = input.val();
+
+                var prefix = 'emails[ecollection][new-' + i + ']';
+                var html =
+                    '<div class="row">' +
+                        '<input type="hidden" data-field="email" name="' + prefix + '[email]" value="' + email + '">' +
+                        '<div class="name">' + email + '</div>' +
+                        '<input type="hidden" name="' + prefix + '[active]" value="0">' +
+                        '<input class="check" checked type="checkbox" name="' + prefix + '[active]" value="1">' +
+                    '</div>';
+
+                list.append(html);
+                input.val('');
+            });
+
+            <?php if(MODE == 'dev') { ?>
+                $('.list-form input', box).val('info@Pipe.ru');
+            <?php } ?>
+        });
+    </script>
+
+    <style>
+        .popup-order-gcalendar {
+            width: 525px;
+        }
+
+        .popup-order-gcalendar .status {
+            border: 2px solid #0a73dc;
+            border-radius: 2px;
+            padding: 4px 10px;
+            margin-bottom: 10px;
+        }
+
+        .popup-order-gcalendar .list-form,
+        .popup-order-gcalendar .list .row {
+            position: relative;
+            margin-bottom: 10px;
+            height: 40px;
+            line-height: 40px;
+            background: #f0f0f0;
+            padding: 0 14px 0 44px;
+        }
+
+        .popup-order-gcalendar .list .check {
+            width: 20px;
+            height: 20px;
+            line-height: 40px;
+            text-align: center;
+            position: absolute;
+            left: 11px;
+            top: 50%;
+            margin-top: -10px;
+            padding: 0;
+        }
+
+        .popup-order-gcalendar .list-form {
+            display: flex;
+            padding: 0;
+        }
+
+        .popup-order-gcalendar .list-form .btn {
+            flex: 0;
+            width: 95px;
+            display: block;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        .popup-order-gcalendar .list-form .name {
+            flex: 1;
+        }
+
+        .popup-order-gcalendar .list-form input {
+            display: block;
+            height: 40px;
+            width: 100%;
+            padding: 0 14px 0 14px;
+            border: none;
+            background: none;
+        }
+
+        .popup-order-gcalendar .sync-select {
+            width: 220px;
+        }
+
+        .popup-order-gcalendar .save {
+            min-width: 120px;
+        }
+    </style>
+</div>

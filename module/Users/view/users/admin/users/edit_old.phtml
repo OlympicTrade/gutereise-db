@@ -1,0 +1,28 @@
+<form action="" method="post" class="table-edit table-edit-users std-form" data-module="<?php echo $module ?>" data-section="<?php echo $section ?>">
+    <?php
+    $this->sidebar()->addItems([
+        [],
+        ['class' => 'blue', 'icon' => 'fas fa-users-cog', 'label' => 'Права', 'url' => '/users/roles/'],
+    ]) ?>
+    <?php echo $this->formInput($form->get('id')); ?>
+
+    <fieldset>
+        <legend>Основные параметры</legend>
+        <?php
+        echo $this->formRowset([[
+            ['width' => 50, 'element' => $form->get('name')],
+            ['width' => 50, 'element' => $form->get('role_id')],
+        ]], $form);
+        ?>
+    </fieldset>
+
+    <fieldset>
+        <legend>Авторизация</legend>
+        <?php
+        echo $this->formRowset([[
+            ['width' => 50, 'element' => $form->get('email')],
+            ['width' => 50, 'element' => $form->get('password')],
+        ]], $form);
+        ?>
+    </fieldset>
+</form>

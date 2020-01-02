@@ -1,0 +1,908 @@
+$background: #f6f6f6;
+$panelColor: #ffffff;
+
+$fontColor1: #000000;
+$fontColor2: #ffffff;
+
+$borderColor: #ececec;
+
+$grad1color1: #0080ff;
+$grad1color2: #21a5f8;
+
+$grad2color1: #6945d9;
+$grad2color2: #464df4;
+
+$grad3color1: #0bc837;
+$grad3color2: #76dc92;
+
+$borderColor1: #ececec;
+$borderColor2: #ff4d89;
+
+h2 {
+    font-size: 15px;
+    font-weight: 400;
+    margin: 22px 0 2px 0;
+}
+
+h3 {
+    font-size: 15px;
+    font-weight: 400;
+    margin: 14px 0 4px 0;
+}
+
+b {
+    font-weight: 600;
+}
+
+.fa-euro-sign, .fa-ruble-sign {
+    font-size: 90%;
+}
+
+input, select, textarea {
+    font-family: 'Proxima Nova', sans-serif;
+    font-weight: 300;
+}
+
+.btn {
+    cursor: pointer;
+    display: inline-block;
+    transition: all 0.2s;
+    font-size: 15px;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    padding: 0 20px;
+    line-height: 40px;
+    border-radius: 3px;
+    color: $fontColor1;
+}
+
+.sm {
+    line-height: 28px;
+    padding: 0 10px;
+    font-size: 15px;
+
+    &.i {
+        width: 28px;
+        padding: 0;
+    }
+}
+
+.btn {
+    border: 1px solid #0c9fff;
+    background: #ffffff;
+
+    &:hover {
+        box-shadow: 0 0 3px #0c9fff;
+    }
+}
+
+.btn.green {
+    border: 1px solid #00ff15;
+    box-shadow: 0 0 1px #00FF15;
+}
+
+
+.btn.red {
+    border: 1px solid #ff5e48;
+
+    &:hover {
+        box-shadow: 0 0 3px #ff5e48;
+    }
+}
+
+.btn.purple {
+    border: 1px solid #c16dff;
+    box-shadow: 0 0 1px #c16dff;
+}
+
+.std-input,
+.std-select,
+.std-textarea {
+    height: 40px;
+    padding: 0 9px;
+    font-size: 14px;
+    background: none;
+    border: none;
+    width: 100%;
+}
+
+.std-select[data-type="numbers"],
+.std-input[data-type="date"],
+.std-select[data-type="time"] {
+    font-family: 'B612 Mono', monospace;
+}
+
+.panel {
+    display: block;
+    background: $panelColor;
+    border-radius: 10px;
+    padding: 25px 28px;
+}
+
+.std-form .success-box {
+    padding: 40px 0;
+    text-align: center;
+    display: none;
+
+    .msg {
+        font-size: 16px;
+    }
+
+    .btn {
+        margin-top: 30px;
+    }
+}
+
+fieldset {
+    position: relative;
+    display: block;
+    padding: 50px 0 0 0;
+    margin-bottom: 20px;
+
+    &.no-label {
+        //padding-top: 15px;
+        padding-top: 0;
+    }
+
+    legend {
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-size: 20px;
+        padding: 15px 0;
+        font-weight: 400;
+        display: block;
+        width: 100%;
+    }
+}
+
+#container, .table-edit, .order-group {
+    & > fieldset {
+        padding-left: 28px;
+        padding-right: 28px;
+        padding-bottom: 20px;
+        border-radius: 10px;
+        background: $panelColor;
+
+        legend {
+            padding: 15px 28px 10px 28px;
+        }
+    }
+}
+
+.tabs {
+    margin-bottom: 20px;
+
+    & > .tabs-header {
+        height: 36px;
+
+        & > .tab {
+            display: block;
+            float: left;
+            line-height: 37px;
+            height: 36px;
+            border-bottom: none;
+            margin: 0 4px 0 0;
+            background: #c6d1d7;
+            cursor: pointer;
+            padding: 0 19px;
+            border-radius: 10px 10px 0 0;
+
+            &:hover {
+                background: #c2cdd3;
+            }
+
+            &.add-tab {
+                padding: 0 13px;
+            }
+
+            &.btn,
+            &.btn:hover,
+            &.active,
+            &.active:hover {
+                background: linear-gradient(135deg, $grad2color1, $grad2color2);
+                color: #ffffff;
+            }
+        }
+    }
+
+    & > .tabs-body {
+        background: $panelColor;
+
+        & > .tab {
+            padding: 12px 15px;
+            border: 1px solid $borderColor1;
+            display: none;
+
+            &.active {
+                display: block;
+            }
+        }
+    }
+}
+
+.std-table {
+    td, th {
+        position: relative;
+        border-bottom: 1px solid $borderColor1;
+        padding: 12px 10px 12px 0;
+        transition: all ease .4s;
+
+        &:last-child {
+            border-right: none;
+            padding-right: 0;
+        }
+
+        &.btns {
+            padding: 6px 0 0 0;
+            width: 60px;
+        }
+
+        input, textarea, select {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    }
+
+    tr {
+        &:hover {
+            td {
+                border-bottom: 1px solid $borderColor2;
+            }
+        }
+    }
+    td {
+        &:hover {
+
+        }
+    }
+}
+
+.element {
+    border-bottom: 1px solid $borderColor1;
+    position: relative;
+    transition: all ease .4s;
+
+    .label {
+        position: absolute;
+        left: 0;
+        font-size: 16px;
+        top: 9px;
+        color: #707780;
+        z-index: 5;
+        transition: all ease .2s;
+    }
+
+    &.focus {
+        border-color: $borderColor2;
+
+        .label {
+            color: $borderColor2;
+        }
+    }
+
+    &.not-empty .label,
+    &.focus .label {
+        position: absolute;
+        z-index: 5;
+        left: 0;
+        top: 0;
+        font-size: 13px;
+    }
+
+    .std-input,
+    .std-textarea,
+    .std-select {
+        position: relative;
+        z-index: 10;
+        height: 38px;
+        padding: 14px 0 0 0;
+        font-size: 14px;
+        background: none;
+        color: $fontColor1;
+    }
+
+    .std-select {
+        padding-right: 0;
+        margin-left: -4px;
+    }
+
+    .std-textarea {
+        height: 95px;
+        padding-top: 28px;
+    }
+
+    .std-textarea.short {
+        height: 48px;
+    }
+
+    .error {
+        background: #ff4f2f;
+        color: #fff;
+        padding: 2px 10px;
+        font-size: 13px;
+        margin-bottom: 1px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+
+    .btn {
+        position: absolute;
+        right: 0;
+        top: 0;
+        padding: 0;
+        cursor: pointer;
+        z-index: 10;
+        text-align: center;
+
+        &.btn-1 {
+            width: 50px;
+            line-height: 50px;
+        }
+
+        &.btn-2 {
+            width: 24px;
+            line-height: 24px;
+
+            &:last-child {
+                top: 25px;
+            }
+        }
+    }
+}
+
+.pagination {
+    display: block;
+    clear: both;
+    margin: 30px 0 60px 0;
+    text-align: center;
+
+    li {
+        display: inline-block;
+        vertical-align: top;
+
+        span, a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            transition: background-color ease .2s;
+            font-size: 16px;
+            color: #757575;
+            margin: 0 2px;
+            border-radius: 50%;
+            background: 50% 50% no-repeat;
+        }
+
+        a:hover {
+            background-color: #ebebeb;
+        }
+
+        &.active a,
+        &.active a:hover {
+            background: linear-gradient(135deg, $grad2color1, $grad2color2);
+            color: #ffffff;
+        }
+
+        &.prev span,
+        &.next span,
+        &.prev a,
+        &.next a {
+
+        }
+
+        &.prev span,
+        &.next span {
+            opacity: 0.35;
+            background-color: transparent !important;
+        }
+
+        &.next a {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.message-box {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    width: 200px;
+    z-index: 100;
+
+    .message {
+        position: relative;
+        top: 50px;
+        color: #ffffff;
+        background: #c5c23f;
+        padding: 0 10px;
+        line-height: 30px;
+        margin-bottom: 6px;
+        transition: all ease .5s;
+        opacity: 0;
+        cursor: pointer;
+        border-radius: 8px;
+
+        i {
+            margin-right: 5px;
+            font-size: 17px;
+
+            &.close,
+            &.loading {
+                position: absolute;
+                right: 15px;
+                top: 9px;
+            }
+        }
+
+        &.del {
+            height: 0;
+            padding: 0;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        &.loading {
+            background: #108fe3;
+        }
+
+        &.error {
+            background: #d9534f;
+        }
+
+        &.success {
+            background: #5cb85c;
+        }
+    }
+}
+
+.std-checkbox {
+    font-size: 15px;
+    margin-right: 4px;
+    border-radius: 2px;
+    background: #f0f0f0;
+    vertical-align: middle;
+    padding: 3px 8px;
+    cursor: pointer;
+
+    input {
+        vertical-align: middle;
+        margin-right: 6px;
+
+    }
+}
+
+.element-checkbox {
+    label {
+        display: block;
+        position: relative;
+        background: #f0f0f0;
+        margin-bottom: 1px;
+        min-height: 30px;
+        padding: 6px 10px 3px 45px;
+        transition: all ease .2s;
+        cursor: pointer;
+
+        &:hover {
+            background: #5f5f5f;
+            color: #ffffff;
+        }
+
+        input {
+            display: none;
+        }
+
+        &:before {
+            content: "\f00d";
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            font-size: 16px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #fc295b;
+            color: #ffffff;
+            font-family: 'Font Awesome 5 Pro';
+            font-weight: 300;
+        }
+
+        &.checked:before {
+            background: #04b151;
+            content: "\f00c";
+        }
+    }
+}
+
+.element.std-file {
+    background: none;
+    position: relative;
+    padding-left: 50px;
+
+    .error {
+        margin-left: -50px;
+    }
+
+    .new, .old {
+        display: inline-block;
+        line-height: 50px;
+        height: 50px;
+        overflow: hidden;
+        border: 2px solid #0a73dc;
+        border-left: none;
+        padding: 0 10px;
+        cursor: pointer;
+
+        &:hover {
+            background: #0a73dc;
+            color: #ffffff;
+        }
+    }
+
+    .new {
+        input {
+            display: none;
+        }
+    }
+
+    &:before {
+        font-weight: 900;
+        font-family: "Font Awesome 5 Free";
+        content: "\f1c2";
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 50px;
+        width: 50px;
+        line-height: 50px;
+        text-align: center;
+        background: #0a73dc;
+        color: #ffffff;
+        font-size: 25px;
+    }
+}
+
+.short-form {
+    margin-top: 10px;
+
+    .sort-placeholder {
+        height: 36px;
+    }
+
+    .pattern {
+        display: none;
+    }
+
+    .cell {
+        position: relative;
+        border-bottom: 1px solid $borderColor1;
+        border-right: none;
+        width: 300px;
+        text-align: left;
+        height: 36px;
+        overflow: hidden;
+        padding-right: 8px;
+
+        &.row-acts {
+            width: 110px;
+            text-align: right;
+            border-left: none;
+            padding: 1px 0;
+
+            .btn {
+                margin-right: 3px;
+            }
+        }
+
+        &.wd {
+            width: 350px;
+        }
+
+        .cell-acts {
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: #ffffff;
+            height: 100%;
+            overflow: hidden;
+            font-size: 10px;
+            padding: 0;
+
+            span {
+                width: 17px;
+                height: 17px;
+                line-height: 19px;
+                text-align: center;
+                color: #ffffff;
+                background: #1d58b8;
+                display: block;
+                margin-bottom: 1px;
+
+                &:hover {
+                    background: #0a73dc;
+                }
+            }
+        }
+    }
+
+    .header {
+        display: flex;
+
+        .cell {
+            height: 33px;
+            font-weight: 400;
+            font-size: 15px;
+            padding-top: 10px;
+
+            &.row-acts {
+                padding: 0 0 1px 0;
+            }
+        }
+    }
+
+    .list {
+        .item {
+            display: flex;
+            padding: 0;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            select, input {
+                width: 100%;
+                height: 36px;
+                line-height: 36px;
+                background: #ffffff;
+                padding: 0 5px 0 0;
+            }
+
+            select {
+                padding: 0;
+            }
+        }
+    }
+}
+
+.pagination {
+    display: block;
+    clear: both;
+    margin: 30px 0 60px 0;
+    text-align: center;
+
+    li {
+        display: inline-block;
+        vertical-align: top;
+
+        span, a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            transition: background-color ease .2s;
+            font-size: 16px;
+            color: #757575;
+            margin: 0 2px;
+            border-radius: 50%;
+            background: 50% 50% no-repeat;
+        }
+
+        a:hover {
+            background-color: #ebebeb;
+        }
+
+        &.active a,
+        &.active a:hover {
+            background: linear-gradient(135deg, $grad2color1, $grad2color2);
+            color: #ffffff;
+        }
+
+        &.prev span, &.next span {
+            opacity: 0.35;
+            background-color: transparent !important;
+        }
+
+        &.next a {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+
+.std-popup {
+
+}
+
+.std-popup .header {
+    padding: 10px 20px;
+    background: #000000;
+    color: #ffffff;
+    font-size: 19px;
+}
+
+.std-popup .body {
+    padding: 20px;
+}
+
+
+.smart-list {
+    .header {
+        padding: 0 66px 0 0;
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 8px;
+    }
+
+    .sort-placeholder {
+        background: rgba(252, 216, 41, 0.5);
+        height: 30px;
+        margin-bottom: 7px;
+    }
+
+    .list .row {
+        margin-bottom: 7px;
+        position: relative;
+        padding-right: 66px;
+
+        &.first {
+            height: 1px;
+
+            &.active .delimiter {
+                opacity: 1;
+            }
+        }
+
+        .std-input, .std-select {
+            height: 30px;
+            font-size: 14px;
+            padding: 0 4px;
+        }
+
+        .delimiter {
+            position: absolute;
+            cursor: pointer;
+            top: 100%;
+            left: 0;
+            height: 7px;
+            width: 100%;
+            border-radius: 3px;
+            transition: all ease .1s;
+            background: #3c74c7;
+            opacity: 0;
+            border: 1px solid #ffffff;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        .btns {
+            position: absolute;
+            right: 0;
+            top: 0;
+
+            .btn {
+                height: 30px;
+                width: 30px;
+                line-height: 30px;
+                padding: 0;
+            }
+        }
+    }
+
+
+    .row.pattern {
+        display: none;
+    }
+}
+
+
+.ui-datepicker { display: none; min-width: 16em }
+.ui-datepicker .ui-datepicker-header { position:relative; padding: .2em 0;}
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next { position:absolute; top: 0.45em; width: 1.8em; height: 1.8em; }
+.ui-datepicker .ui-datepicker-prev { left:6px; }
+.ui-datepicker .ui-datepicker-next { right:6px; }
+.ui-datepicker .ui-datepicker-prev span, .ui-datepicker .ui-datepicker-next span { display: block; position: absolute; left: 50%; margin-left: -8px; top: 50%; margin-top: -8px;  }
+.ui-datepicker .ui-datepicker-title select { font-size:1em; margin:1px 0; }
+.ui-datepicker select.ui-datepicker-month-year {width: 100%;}
+.ui-datepicker select.ui-datepicker-month,
+.ui-datepicker select.ui-datepicker-year { width: 49%;}
+.ui-datepicker td span, .ui-datepicker td a { display: block; text-decoration: none; }
+.ui-datepicker .ui-datepicker-buttonpane { background-image: none; margin: .7em 0 0 0; padding:0 .2em; border-left: 0; border-right: 0; border-bottom: 0; }
+.ui-datepicker .ui-datepicker-buttonpane button { float: right; margin: .5em .2em .4em; cursor: pointer; padding: .2em .6em .3em .6em; width:auto; overflow:visible; }
+.ui-datepicker .ui-datepicker-buttonpane button.ui-datepicker-current { float:left; }
+
+.ui-datepicker {
+    border: 1px solid #ececec;
+    background: #FFF;
+    border-radius: 5px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+    z-index: 9000 !important;
+}
+
+.ui-datepicker .ui-datepicker-title {
+    margin: 0 2.3em;
+    line-height: 1.4em;
+    font-size: 120%;
+    text-align: center;
+    font-weight: bold
+}
+
+.ui-datepicker .ui-datepicker-prev {
+    background: url("../images/arrow_left.svg") 0 50% no-repeat;
+}
+
+.ui-datepicker .ui-datepicker-next {
+    background: url("../images/arrow_right.svg") 0 50% no-repeat;
+}
+
+.ui-datepicker .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-next {
+    content: '';
+    background-size: 1.2em;
+    width: 1.2em;
+    height: 1.2em;
+    cursor: pointer;
+}
+
+.ui-datepicker thead{
+    display: none;
+}
+
+.ui-datepicker td {
+    border: 1px solid #ececec;
+}
+
+.ui-datepicker td:first-child {
+    border-left: none;
+}
+
+.ui-datepicker td:last-child {
+    border-right: none;
+}
+
+.ui-datepicker tr:last-child td {
+    border-bottom: none;
+}
+
+.ui-datepicker td span, .ui-datepicker td a {
+    display: block;
+    height: 1.9em;
+    line-height: 1.9em;
+    font-size: 10.5pt;
+    padding: 0;
+    margin: 0;
+    font-weight: bold;
+    color: #2e2e2e;
+    text-align: center;
+}
+
+.ui-datepicker td.ui-datepicker-today a {
+    background: #d1d1d1;
+}
+
+.ui-datepicker td.ui-datepicker-current-day a {
+    background: #f56e68;
+    color: #FFF;
+}
+
+.ui-datepicker td a:hover {
+    background: #34495e;
+    color: #FFF;
+}
+
+.ui-datepicker.no-year .ui-datepicker-year {
+    display: none;
+}

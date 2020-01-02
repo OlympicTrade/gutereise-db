@@ -1,0 +1,103 @@
+<?php
+/** @var \Pipe\Form\View\Helper\FormFactory $factory */
+$factory = $this->formFactory()->setForm($form);
+
+$htmlLink = '';
+if($document->get('file')) {
+    $htmlLink = '<a class="file-select" href="/documents/get-file/' . $document->id() . '/">Открыть текущий шаблон</a>';
+}
+
+$list = function($title, $opts, $prefix = '') {
+    $html =
+        '<div class="instructions">'.
+        '<h3>' . $title . ':</h3>'.
+        '<div class="list">';
+
+    foreach ($opts as $key => $val) {
+        $html .=
+            '<div class="row">'.
+            '<div class="label">${' . $prefix . $key . '} </div>'.
+            $val.
+            '</div>';
+    }
+
+    $html .=
+        '</div>'.
+        '</div>';
+
+    return $html;
+};
+
+$htmlHelp = '';
+
+$htmlHelp .= $list('Общие параметры', [
+    'contract_nbr'      => 'Номер договора',
+    'date_str'          => 'Текущая дата («15» Декабря 2019 г.)',
+]);
+
+$cDetails = [
+    'org_form'          => 'Орг. прав. форма кратко (ООО)',
+    'org_form_full'     => 'Орг. прав. форма полностью (Общество с ограниченной ответственностью)',
+    'org_form_short'    => 'Орг. прав. форма кратко (ООО, ИП, ОАО и тд.)',
+    'name' => 'Название компании', 'name_full' => 'Название компании + прав. форма (ООО "Рога и копыта")',
+    'dir_name'          => 'ФИО директора (Иванов Иван Иваныч)',
+    'dir_name_decl'     => 'ФИО директора в род. падеже (Иванова Ивана Иваныча)',
+    'dir_name_short'    => 'ФИО директора (сокращенно Иванов И.И.)',
+    'dir_name_full'     => 'ФИО директора + должность (Генеральный директор Иванов И.И.)',
+    'details'           => 'Реквизиты полностью',
+    'phones' => 'Телефон', 'emails' => 'E-mail',
+    //'inn' => 'ИНН', 'kpp' => 'КПП', 'ogrn' => 'ОГРН',
+    //'bank' => 'Банк', 'bik' => 'БИК', 'rs' => 'Р/С', 'ks' => 'К/С',
+    'reg_address' => 'Юридический адрес', 'fact_address' => 'Фактический адрес',
+];
+
+$htmlHelp .=
+    '<div class="cols">'.
+        '<div class="col-50">'.
+            $list('Реквизиты компании', $cDetails, 'comp_').
+        '</div>'.
+        '<div class="col-50">'.
+            $list('Реквизиты контрагента', $cDetails, 'kontr_').
+        '</div>'.
+    '</div>';
+
+$htmlHelp .= $list('Данные заказа', [
+    'order_group'        => 'Размер группы (12 взрослых и 5 детей)',
+    'order_program'      => 'План экскурсии',
+    'order_summary'      => 'Итоговая стоимость',
+    'order_price'        => 'Полная стоимость (100 000)',
+    'order_price_txt'    => 'Стоимость текстов (сто тысяч рублей)',
+]);
+?>
+
+<?=
+$factory->open().
+$factory->structure([
+    ['id'],
+    [
+        'type'   => 'panel',
+        'name'   => 'Основные параметры',
+        'children' => [
+            'name',
+        ],
+    ],
+    [
+        'type'   => 'panel',
+        'name'   => 'Файл шаблона',
+        'children' => [
+            ['type' => 'html', 'html' => $htmlLink],
+            'file',
+            ['type' => 'html', 'html' => $htmlHelp],
+        ],
+    ],
+]);
+?>
+<script>
+    var form = $('.table-edit-documents');
+    $('.instructions .row', form).on('click', function () {
+        $.pipe.copy($('.label', $(this)));
+    });
+</script>
+<?=
+$factory->close();
+?>

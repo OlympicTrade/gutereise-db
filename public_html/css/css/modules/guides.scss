@@ -1,0 +1,21 @@
+#calendar-guide-profile {
+    .controls {
+        .default-status {
+            position: absolute;
+            right: 10px;
+            width: auto;
+        }
+    }
+
+    .calendar {
+        .day {
+            &[data-status="free"] .body {
+                background: #bbe2bb;
+            }
+
+            &[data-status="busy"] .body {
+                background: #ffdcdc;
+            }
+        }
+    }
+}

@@ -1,0 +1,51 @@
+<?php
+/** @var \Pipe\Form\View\Helper\FormFactory $factory */
+$factory = $this->formFactory()->setForm($form);
+?>
+
+<?= $factory->open(); ?>
+
+<?=
+$factory->structure([
+    ['id'],
+    [
+        'type'   => 'panel',
+        'name'   => 'Основные параметры',
+        'children' => [
+            ['type' => 'preset', 'name' => 'basic'],
+        ],
+    ],
+    [
+        'type'   => 'panel',
+        'name'   => 'Контактные лица',
+        'children' => [
+            ['employees'],
+        ],
+    ],
+    [
+        'type'   => 'panel',
+        'name'   => 'Реквизиты',
+        'children' => [
+            'company_details',
+        ],
+    ],
+]);
+?>
+
+<script>
+    var form = $('.table-edit-clients');
+
+    $('.add-google-contact', form).on('click', function() {
+        var btn = $(this);
+        $.ajax({
+            url: '/clients/add-google-client/',
+            method: 'post',
+            data: $.pipe.serializeForm(),
+            success: function(resp) {
+                btn.empty().html('<i class="fas fa-check"></i>');
+            }
+        });
+    });
+</script>
+
+<?=  $factory->close(); ?>

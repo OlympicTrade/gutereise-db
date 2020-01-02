@@ -1,0 +1,132 @@
+<div class="std-popup popup-order-emails">
+    <div class="header">
+        Рассылка по почте
+    </div>
+    <div class="body">
+        <?php
+        $html =
+            '<div class="list">';
+
+        foreach ($emails as $email) {
+            $html .=
+                '<div class="row">'.
+                    '<div class="name">' . $email['name'] . '</div>'.
+                    '<span class="btn send" data-email="' . $email['email'] . '" title="' . $email['email'] . '"><i class="far fa-envelope"></i></span>'.
+                '</div>';
+        }
+
+        $html .=
+            '<div class="row custom">'.
+                '<div class="name"><input type="text" placeholder="Введите e-mail"></div>'.
+                '<span class="btn send hide"><i class="far fa-envelope"></i></span>'.
+            '</div>';
+
+        $html .=
+            '</div>';
+
+        echo $html;
+        ?>
+        <input type="hidden" value='<?php echo str_replace("'", '"', $order->get('proposal')) ?>' class="proposal">
+        <div class="controls">
+            <span class="btn send-to-all">Отправить всем</span>
+        </div>
+    </div>
+
+    <script>
+        var box = $('.popup-order-emails');
+
+        $('.list .send', box).on('click', function () {
+            var btn = $(this);
+            btn.html('<i class="fas fa-spinner fa-spin"></i>');
+
+            var message = new Message();
+            message.setLoading({icon: 'far fa-envelope'});
+
+            $.ajax({
+                url: '/orders/emails/',
+                method: 'post',
+                data: {
+                    type: 'send',
+                    email: btn.data('email'),
+                    proposal: $('.proposal', box).val()
+                },
+                success: function() {
+                    message.setMessage({icon: 'far fa-envelope', text: 'Отправлено'});
+
+                    btn.removeClass('send')
+                        .removeClass('red')
+                        .addClass('green')
+                        .html('<i class="fas fa-check"></i>');
+                },
+                error: function () {
+                    btn.addClass('red')
+                        .addClass('green')
+                        .html('<i class="fas fa-times"></i>');
+                }
+            });
+        });
+
+        $('.send-to-all', box).on('click', function () {
+            $('.list .send', box).trigger('click');
+        });
+
+        $('.list .custom input', box).on('keyup', function () {
+            var input = $(this);
+            var btn = input.closest('.row').find('.btn');
+            btn.html('<i class="far fa-envelope"></i>').addClass('send');
+
+            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+            if(re.test(input.val().toLowerCase())) {
+                btn.removeClass('hide').attr('data-email', input.val());
+            } else {
+                btn.addClass('hide');
+            }
+        }).trigger('keyup');
+
+
+    </script>
+
+    <style>
+        .popup-order-emails .list .row {
+            position: relative;
+            margin-bottom: 10px;
+            height: 40px;
+            line-height: 40px;
+            background: #f0f0f0;
+            padding: 0 54px 0 14px;
+            min-width: 525px;
+        }
+
+        .popup-order-emails .list .btn {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: 0;
+        }
+
+        .popup-order-emails .list .btn.hide {
+            display: none;
+        }
+
+        .popup-order-emails .list .row.custom {
+            padding: 0;
+        }
+
+        .popup-order-emails .list .row.custom input {
+            height: 40px;
+            width: 100%;
+            padding: 0 54px 0 14px;
+            border: none;
+            background: none;
+        }
+
+        .popup-order-emails {
+
+        }
+    </style>
+</div>

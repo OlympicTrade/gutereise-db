@@ -1,0 +1,20 @@
+<form action="/guides/profile/" method="post" class="table-edit table-edit-guides-profile std-form" data-module="<?php echo $module ?>" data-section="<?php echo $section ?>">
+    <?php echo $this->sidebar(['class' => 'table-edit-guides']) ?>
+
+    <?php echo $this->formInput($form->get('id')) ?>
+
+    <fieldset>
+        <legend>Основные параметры</legend>
+        <?php echo $this->commonElements($form, ['name', 'contacts']); ?>
+    </fieldset>
+
+    <fieldset>
+        <legend>Языки</legend>
+        <?php echo $this->formElement($form->get('languages')); ?>
+    </fieldset>
+
+    <fieldset>
+        <legend>Экскурсии</legend>
+        <?php echo $this->formElement($form->get('museums')); ?>
+    </fieldset>
+</form>

@@ -1,0 +1,136 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<?php /*
+<html lang="<?php echo 'ru' //echo $translator->getLangCode() ?>">
+ */ ?>
+<head>
+    <title>Gute Reise</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <style>
+        body, table, td, a{-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;}
+        table, td{mso-table-lspace: 0; mso-table-rspace: 0;}
+        img{-ms-interpolation-mode: bicubic;}
+        img{border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none;}
+        table {width: 100%; border-collapse:collapse !important; border-spacing:0;}
+        body{min-height: 100%; height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important;}
+        * {margin: 0 !important; padding: 0; word-wrap: break-word; outline: none;}
+        *:focus {outline: none;}
+        td {vertical-align: top;}
+        a {text-decoration: none !important; font-weight: normal;}
+
+        h1, h2, p {
+            margin: 0 !important;
+        }
+
+        p, li {
+            font-size: 15px;
+            padding-bottom: 14px;
+        }
+
+        /* iOS BLUE LINKS */
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+        
+        .btn {
+            display: inline-block !important;
+            background: #fcd828 !important;
+            padding: 13px 25px !important;
+            color: #000000 !important;
+            font-size: !important;
+        }
+
+        @media screen and (max-width: 500px){
+            p {
+                font-size: 14px !important;
+                padding-bottom: 14px !important;
+            }
+
+            .wrapper {
+                padding: 0 !important;
+            }
+
+            .header {
+                padding: 20px 7px 20px 7px !important;
+            }
+
+            .header-desc {
+                display: none !important;
+            }
+
+            .header-desc p {
+                display: none !important;
+            }
+
+            .header-logo {
+                height: auto !important;
+                text-align: center;
+                padding: 10px 0;
+            }
+
+            .bottom-link {
+                display: block !important;
+                padding: 0 0 2px 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<?php
+$domain = 'https://gutereise.ru';
+echo $this->tags([
+    ['table', 'tags' => [
+        ['tr', 'tags' => [
+             ['td',
+                 'class' => 'wrapper',
+                 'bgcolor' => '#eeeeee',
+                 'background' => $domain . '/mail/bg.png',
+                 'style' => ['padding' => '40px 5px 60px 5px',], 'tags' => [
+                 ['table',
+                     'class' => 'header',
+                     'style' => ['max-width' => '560px', 'border' => '1px solid #e7e7e7'], 'tags' => [
+                     ['row', 'bgcolor' => '#000000', 'tags' => [
+                         ['td',
+                             'class' => 'header-logo',
+                             'style' => ['width' => '232px', 'height' => '90px', 'vertical-align' => 'middle', 'color' => '#ffffff'],
+                             'tags' => [
+                             ['img', 'src' =>  $domain . '/mail/top-logo.png'],
+                         ]],
+                         ['td',
+                             'class' => 'header-desc',
+                             'align' => 'left',
+                             'style' => ['height' => '90px', 'vertical-align' => 'middle', 'padding-left' => '45px'],
+                             'tags' => [['p', 'style' => ['padding-bottom' => '0', 'color' => '#ffffff', 'font-size' => '16px'], 'text' => 'Индивидуальные экскурсии<br> по Санкт-Петербургу']]
+                         ]
+                      ]],
+                     $this->content,
+                     ['row', 'tags' => [
+                         ['td',
+                             'style' => ['height' => '60px', 'border-bottom' => '2px solid #000000'],
+                         ],
+                     ]],
+                     ['row', 'tags' => [
+                         ['td',
+                             'align' => 'left',
+                             'style' => ['padding-top' => '25px', 'padding-bottom' => '25px'], 'tags' => [
+                             ['a', 'class' => 'bottom-link', 'href' => 'http://gutereise.ru/', 'text' => 'gute-reise.ru', 'style' => ['display' => 'inline-block;', 'padding-right' => '12px']],
+                             ['a', 'class' => 'bottom-link', 'href' => 'tel:+78123808847', 'text' => '+7 (812) 380-88-47', 'style' => ['display' => 'inline-block;', 'padding' => '0 12px']],
+                             ['a', 'class' => 'bottom-link', 'href' => 'tel:+78129571765', 'text' => '+7 (812) 957-17-65', 'style' => ['display' => 'inline-block;', 'padding-left' => '12px']],
+                         ]],
+                     ]],
+                ]],
+            ]]
+        ]],
+    ]],
+]);
+?>
+</body>
+</html>

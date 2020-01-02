@@ -1,0 +1,99 @@
+<?php
+$versionChange =
+'<a '.
+     'href="http://db.gute-reise.ru' . $_SERVER['REQUEST_URI'] . '" ' .
+     'style="width: 55px;line-height: 55px;text-align: center;display: block;color: #ffffff;background: #0f80da;'.
+     'position: fixed; bottom: 40px; right: 40px; border-radius: 50%; z-index: 999999999"'.
+'>Old</a>';
+?>
+
+<?php
+$compressor = \Pipe\Compressor\Compressor::getInstance();
+
+$this->adminMetaTags($this);
+
+$this->headLink()
+    ->prependStylesheet($compressor->getLink('css', 'desktop'));
+
+if(!ONLINE) {
+$this->headLink()
+    //->prependStylesheet('/css/libs/fontawesome.css')
+;
+} else {
+    $this->headLink()
+        //->prependStylesheet('//use.fontawesome.com/releases/v5.9.0/css/all.css')
+        ->prependStylesheet('//fonts.googleapis.com/css?family=B612+Mono');
+}
+
+$this->headScript()
+    ->prependFile($compressor->getLink('js', 'desktop'));
+
+if(!ONLINE) {
+    $this->headScript()
+        ->prependFile('/js/libs/ckeditor/ckeditor.js')
+        ->prependFile('/js/libs/jquery-ui.js')
+        ->prependFile('/js/libs/jquery.js');
+} else {
+    $this->headScript()
+        ->prependFile('/js/libs/ckeditor/ckeditor.js')
+        ->prependFile('//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js')
+        ->prependFile('//ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js')
+        ->prependFile('//maps.googleapis.com/maps/api/js?key=AIzaSyBnWXKqCYhG4YK8xL_KspWr2L3PMu_3lwM&libraries=places');
+}
+?>
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <?php
+    echo $this->headTitle() . "\n";
+    echo $this->headMeta()  . "\n";
+    echo $this->headLink()  . "\n";
+    echo $this->headScript()  . "\n";
+    ?>
+</head>
+<body>
+    <?= $versionChange ?>
+    <div id="search">
+        <div class="box">
+            <i class="fal fa-search"></i>
+            <input type="text" placeholder="Поиск..." name="query">
+        </div>
+
+        <div class="close"><i class="fal fa-times"></i></div>
+    </div>
+    <div class="template">
+        <div id="nav">
+            <div class="main <?= $template->nav->main ?>">
+                <div class="logo"></div>
+
+                <div class="widget search">
+                    <i class="fal fa-search"></i>
+                    <input type="text" placeholder="Поиск..." name="query">
+                </div>
+
+                <div class="widget menu">
+                    <?php echo $this->adminNav() ?>
+                </div>
+
+                <span class="size-switcher"></span>
+            </div>
+            <div class="module <?= $template->nav->module ?>">
+                <?= $this->adminSidebar()->render() ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="template <?= $template->type ?>">
+        <div id="container" class="<?= $this->wrapper ?>">
+            <?= $this->content; ?>
+        </div>
+    </div>
+
+    <script>
+        globals['module']  = '<?= $this->module ?>';
+        globals['section'] = '<?= $this->section ?>';
+    </script>
+<body>
+</html>

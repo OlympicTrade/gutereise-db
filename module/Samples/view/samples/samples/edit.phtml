@@ -1,0 +1,14 @@
+<form action="" method="post" class="table-edit table-edit-samples std-form" data-module="<?php echo $module ?>" data-section="<?php echo $section ?>">
+    <?php echo $this->sidebar(['class' => 'table-edit-samples']) ?>
+    <?php echo $this->formInput($form->get('id')); ?>
+
+    <fieldset>
+        <legend>Основные параметры</legend>
+
+        <?php
+        echo $this->formRowset([[
+            ['width' => 100, 'element' => $form->get('name')],
+        ]], $form);
+        ?>
+    </fieldset>
+</form>

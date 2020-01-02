@@ -1,0 +1,30 @@
+<?php echo $this->sidebar(['btns' => []]) ?>
+
+<div id="content">
+    <h1><?php echo 'Поиск:  «' . $this->query . '»'; ?></h1>
+    <?php if(!$results) { ?>
+    <div class="std-box">
+        Записей не найдено
+    </div>
+    <?php } else { ?>
+        <?php foreach($results as $data) { ?>
+        <div class="std-box table-box">
+            <table class="std-table table-list data-list-<?php echo $data['info']['module'] ?>">
+                <thead>
+                    <tr>
+                        <th class="tal"><?php echo $data['info']['label'] ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach($data['data'] as $row) {
+                    echo
+                    '<tr class="data-row" data-module="' . $data['info']['module'] . '" data-id="' . $row['id'] . '">'
+                        .'<td class="tal">' . $row['name'] . '</td>'
+                    .'</tr>';
+                } ?>
+                </tbody>
+            </table>
+        </div>
+        <?php } ?>
+    <?php } ?>
+</div>

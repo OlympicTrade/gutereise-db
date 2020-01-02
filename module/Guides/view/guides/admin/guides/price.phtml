@@ -1,0 +1,70 @@
+<form action="/guides/price/" method="post" class="table-edit table-edit-guides-price std-form">
+    <?php echo $this->adminSidebar()->setOptions([
+        'class'  => 'table-edit-guides-price',
+        'preset' => false,
+        'items'  => [
+            ['class' => 'item-save blue', 'icon' => 'far fa-cloud-upload', 'label' => 'Сохранить', 'attrs' => ['data-redirect' => 'reload', 'data-url' => '/guides/price/']],
+        ],
+    ]) ?>
+
+    <fieldset>
+        <legend>Языки</legend>
+        <?php
+        $languages = \Application\Admin\Model\Settings::getInstance()->plugin('languages');
+
+        $types = [
+            1 => 'Почасовая оплата',
+            2 => 'Минимальная оплата',
+            3 => 'Максимальная оплата',
+        ];
+
+        $html =
+            '<table class="std-table" style="width: auto;">';
+
+        $html .=
+            '<tr>'
+                .'<th style="width: 150px"></th>';
+        foreach ($languages as $language) {
+            $html .=
+                '<th style="width: 100px">' . $language->get('name') .'</th>';
+        }
+        $html .= '</tr>';
+
+        foreach ($types as $tKey => $type) {
+            $html .=
+                '<tr>'
+                    .'<th>' . $type . '</th>';
+
+            foreach ($languages as $language) {
+                $lKey = $language->id();
+
+                $gPrice = new \Guides\Admin\Model\GuidePrice();
+                $gPrice->select()->where([
+                    'lang_id'   => $lKey,
+                ]);
+
+                switch ($tKey) {
+                    case 1:
+                        $val = $gPrice->get('price');
+                        break;
+                    case 2:
+                        $val = $gPrice->get('min_price');
+                        break;
+                    case 3:
+                        $val = $gPrice->get('max_price');
+                        break;
+                }
+
+                $html .= '<td><input name="gp[' . $lKey . '][' . $tKey . ']" data-type="' . $tKey . '"' .
+                    ' data-lang="' . $lKey . '" value="' . (int) $val . '"></td>';
+            }
+
+            $html .= '</tr>';
+        }
+
+        $html .= '</table>';
+
+        echo $html;
+        ?>
+    </fieldset>
+</form>

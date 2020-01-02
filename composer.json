@@ -1,0 +1,31 @@
+{
+    "autoload": {
+        "psr-4": {
+            "Pipe\\":       "local/Pipe/",
+            "PhpOffice\\":  "local/PhpOffice/",
+
+            "Application\\":"module/Application/src/",
+            "Clients\\":    "module/Clients/src/",
+            "Documents\\":  "module/Documents/src/",
+            "Drivers\\":    "module/Drivers/src/",
+            "Excursions\\": "module/Excursions/src/",
+            "Guides\\":     "module/Guides/src/",
+            "Hotels\\":     "module/Hotels/src/",
+            "Museums\\":    "module/Museums/src/",
+            "Managers\\":   "module/Managers/src/",
+            "Orders\\":     "module/Orders/src/",
+            "Users\\":      "module/Users/src/",
+            "Translator\\": "module/Translator/src/",
+            "Transports\\": "module/Transports/src/",
+            "Sync\\":       "module/Sync/src/"
+        }
+    },
+    "require": {
+        "google/apiclient": "2.*",
+        "zendframework/zendframework": "3.*",
+        "zendframework/zend-developer-tools": "^1.1.0",
+        "ghislainf/zf2-whoops": "dev-master",
+        "matthiasmullie/minify":"*",
+        "leafo/scssphp": "*"
+    }
+}

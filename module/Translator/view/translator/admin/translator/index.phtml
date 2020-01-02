@@ -1,0 +1,168 @@
+<div class="translator-form" data-module="<?php echo $module ?>" data-section="<?php echo $section ?>">
+
+<?php
+echo $this->adminSidebar()->setOptions([
+    'class'  => 'translator-sidebar',
+    'preset' => false,
+    'items'  => [
+        ['class' => 'add', 'label' => 'Добавить', 'icon' => 'fas fa-plus'],
+        ['class' => 'sync', 'label' => 'Обновить', 'icon' => 'fas fa-sync'],
+    ],
+]) ?>
+
+<?php
+$html = '';
+
+$i = 0;
+foreach ($items as $row) {
+    $i++;
+    if(strpos($row->get('ru'), '<p>') !== false) {
+        $txtClass = 'class="editor"';
+    } else {
+        $txtClass = '';
+    }
+
+    $html .=
+        '<div class="row" data-id="' . $row->id() . '">'.
+        '<div class="cell"><textarea name="tr-ru-' . $i . '" ' . $txtClass . ' data-lang="ru">' . $row->get('ru') . '</textarea></div>'.
+        '<div class="cell"><textarea name="tr-en-' . $i . '" ' . $txtClass . ' data-lang="en">' . $row->get('en') . '</textarea><span class="btn tr"><i class="fas fa-language"></i></span></div>'.
+        '<div class="cell"><textarea name="tr-de-' . $i . '" ' . $txtClass . ' data-lang="de">' . $row->get('de') . '</textarea><span class="btn tr"><i class="fas fa-language"></i></span></div>';
+
+    if($row->get('url')) {
+        $html .=
+            '<div class="cell ctrls"><a href="' . $row->get('url') . '" class="btn link"><i class="fas fa-link"></i></a></div>';
+    } else {
+        $html .=
+            '<div class="cell ctrls"><span class="btn del"><i class="fas fa-trash-alt"></i></span></div>';
+    }
+
+    $html .=
+        '</div>';
+}
+?>
+
+<div class="langs-table">
+    <div class="list">
+        <?php echo $html ?>
+    </div>
+</div>
+</div>
+
+<script>
+    $(function () {
+        var form = $('.translator-form');
+        var sidebar = $.pipe.template.getModuleMenu();
+        var list = $('.list', form);
+
+        $('.add', sidebar).on('click', function () {
+            $('<div class="row" data-id="0">' +
+                    '<div class="cell"><textarea data-lang="ru"></textarea></div>' +
+                    '<div class="cell"><textarea data-lang="en"></textarea><span class="btn tr"><i class="fas fa-language"></i></span></div>' +
+                    '<div class="cell"><textarea data-lang="de"></textarea><span class="btn tr"><i class="fas fa-language"></i></span></div>' +
+                    '<div class="cell ctrls"><span class="btn del"><i class="fas fa-trash-alt"></i></span></div>' +
+                '</div>').prependTo(list);
+        });
+
+        $('.sync', sidebar).on('click', function () {
+            $.ajax({
+                url: '/translator/sync/',
+                method: 'post',
+                data: {},
+                success: function (resp) {}
+            });
+        });
+
+        list.on('click', '.del', function () {
+            var row = $(this).closest('.row');
+            var id = row.data('id');
+
+            row.remove();
+
+            if(id === '0') return;
+
+            $.ajax({
+                url: '/translator/delete/',
+                method: 'post',
+                data: {id: id},
+                success: function (resp) {}
+            });
+        });
+
+        list.on('click', '.tr', function () {
+            var row  = $(this).closest('.row');
+            var cell = $(this).closest('.cell');
+            var textarea = cell.children('textarea');
+
+            $.ajax({
+                url: 'https://translate.yandex.net/api/v1.5/tr.json/translate',
+                method: 'get',
+                data: {
+                    key:  'trnsl.1.1.20181130T040817Z.adb8b86ba5a5a8e8.4b24ec76a42ddfe567e662d2a5dcd36420d8f599',
+                    text: row.find('textarea[data-lang="ru"]').val(),
+                    lang: textarea.data('lang'),
+                    format: textarea.hasClass('editor') ? 'html' : 'plain'
+                },
+                success: function (resp) {
+                    textarea.val(resp.text);
+
+                    if(textarea.hasClass('editor')) {
+                        CKEDITOR.instances[textarea.attr('name')].setData(resp.text);
+                    }
+
+                    textarea.trigger('keyup');
+                }
+            });
+        });
+
+        list.on('focus', 'textarea', function () {
+            $(this).closest('.row').addClass('focus');
+        });
+
+        list.on('focusout', 'textarea', function () {
+            $(this).closest('.row').removeClass('focus');
+        });
+
+        $('textarea.editor', list).each(function () {
+            var textarea = $(this);
+            var editor = CKEDITOR.instances[textarea.attr('name')];
+
+            editor.on('instanceReady', function() {
+                editor.document.on('keyup', function(e) {
+                    textarea.val(editor.getData());
+                    saveField(textarea);
+                });
+            });
+        });
+
+        list.on('keyup', 'textarea', function () {
+            saveField($(this));
+        });
+
+        var cTimer;
+        function saveField(textarea) {
+            var row = textarea.closest('.row');
+
+            clearTimeout(cTimer);
+            cTimer = setTimeout(function () {
+                if(textarea.hasClass('editor')) {
+                    CKEDITOR.instances[textarea.attr('name')].updateElement();
+                }
+
+                var data = {
+                    id: row.data('id'),
+                    lang: textarea.data('lang'),
+                    text: textarea.val()
+                };
+
+                $.ajax({
+                    url: '/translator/update/',
+                    method: 'post',
+                    data: data,
+                    success: function (resp) {
+                        row.data('id', resp.id);
+                    }
+                });
+            }, 400);
+        }
+    });
+</script>

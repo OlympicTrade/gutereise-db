@@ -1,0 +1,168 @@
+    <?php
+    /** @var \Pipe\Form\View\Helper\FormFactory $factory */
+    $factory = $this->formFactory()->setForm($form);
+
+    echo
+    $factory->open().
+    $factory->structure([
+        ['id'],
+        [
+            'type'   => 'panel',
+            'name'   => 'Основные параметры',
+            'children' => ['name'],
+        ],
+        [
+            'type'   => 'panel',
+            'name'   => 'Наценка',
+            'children' => ['margin'],
+        ],
+    ]);
+
+    $days = $excursion->plugin('days');
+
+    $html =
+        '<div class="tabs">' .
+        '<div class="tabs-header">';
+
+    $d = 0;
+    foreach($days as $day) {
+        $d++;
+        $html .=
+            '<div class="tab" data-tab="' . $d . '">День ' . $d . '</div>';
+    }
+
+    $html .=
+            '<div class="tab add-tab"><i class="fas fa-plus"></i></div>'.
+        '</div>'.
+        '<div class="tabs-body">';
+
+    $d = 0;
+    foreach($days as $day) {
+        $d++;
+        $html .=
+            '<div class="tab" data-tab="' . $d . '">' . $this->excursionDayForm($day) . '</div>';
+    }
+
+    $html .=
+            '</div>'.
+        '</div>';
+
+    echo $html;
+    ?>
+<?=
+$factory->close();
+?>
+
+<style>
+    .table-edit-excursions .proposal-settings {
+        margin-top: 10px;
+    }
+
+    .table-edit-excursions .proposal-settings .label {
+        margin-right: 10px;
+    }
+</style>
+
+<script>
+$(function () {
+    var form = $('.table-edit-excursions');
+
+    var timers = {};
+    var updateSelect = function (form, select1, select2, url) {
+        form.on('change', select1, function() {
+            var el = $(this);
+            var row = $(this).closest('.item');
+            var timerKey = select1;
+
+            clearTimeout(timerKey);
+            timers[timerKey] = setTimeout(function () {
+                $.ajax({
+                    url: url,
+                    method: 'post',
+                    data: {
+                        id: el.val()
+                    },
+                    success: function(resp) {
+                        var select = $(select2, row);
+                        $('option', select).css({display: 'none'});
+                        $('[value=""]', select).css({display: 'block'});
+
+                        if($.inArray(select.val(), resp.ids) == -1) {
+                            select.val('');
+                        }
+
+                        $.each(resp.ids, function(key, val) {
+                            $('[value="' + val + '"]', select).css({display: 'block'});
+                        });
+
+                        select.trigger('change')
+                    }
+                });
+            }, 400);
+        });
+
+        $(select1, form).trigger('change');
+    };
+
+    function initTab(tab) {
+        /*updateSelect(
+            $('.transport-short-form', tab),
+            '.transport-type',
+            '.transport-id',
+            '/transports/get-transport-by-type/'
+        );*/
+
+        /*updateSelect(
+            $('.transport-short-form', tab),
+            '.transport-id',
+            '.transfer-id',
+            '/transports/get-transport-transfers/'
+        );*/
+    }
+
+    var tabs = new Tabs($('.tabs', form), {
+        initTab: function(tab) {
+            initTab(tab);
+        },
+        addTab: function(tabs, tabNbr) {
+            var html = '';
+            $.ajax({
+                url: '/excursions/add-day/',
+                method: 'post',
+                async: false,
+                data: {
+                    excursionId: $('[name="id"]', form).val()
+                },
+                success: function(resp) {
+                    html = resp.html;
+                }
+            });
+
+            return {
+                id:     'day-' + tabNbr,
+                header: 'День ' + tabNbr,
+                body:    html,
+            };
+        },
+        delTab: function(tabs, hTab, bTab) {
+            $.ajax({
+                url: '/excursions/del-day/',
+                method: 'post',
+                async: false,
+                data: {
+                    dayId: $('.day-id', bTab).val()
+                },
+                success: function(resp) {
+
+                }
+            });
+        },
+        onLoad: function(tab) {
+            initElements(tab);
+			$('.short-form', tab).dbShortTables();
+        }
+    });
+
+    <?= $days->count() ? '' : 'tabs.addTab();' ?>
+});
+</script>

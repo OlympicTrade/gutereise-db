@@ -1,0 +1,41 @@
+<?php echo $this->doctype(); ?>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=400">
+    <title>Авторизация</title>
+
+    <?php
+    echo $this->headLink(['rel' => 'shortcut icon', 'href' => '/images/favicon.ico'])
+        ->prependStylesheet('/css/libs/login.css')
+        ->prependStylesheet('/css/libs/reset.css')
+        ->prependStylesheet('/fonts/fonts.css');
+    ?>
+
+    <?php
+    echo $this->headScript()->prependFile('//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+    ?>
+</head>
+<body>
+<div class="wrapper">
+    <div class="login-box">
+        <div class="header">
+            Gute Reise DB
+        </div>
+        <div class="body">
+            <div class="access-denied">
+                У вас недостаточно прав для просмотра этого раздела сайта
+            </div>
+            <div class="btns cols">
+                <div class="col-50">
+                    <a class="btn" href="/">На главную</a>
+                </div>
+                <div class="col-50">
+                    <a class="btn" href="/logout/">Выйти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

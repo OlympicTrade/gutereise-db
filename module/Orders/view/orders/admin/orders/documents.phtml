@@ -1,0 +1,50 @@
+<div class="std-popup popup-order-documents">
+    <div class="header">
+        <i class="fas fa-file-contract"></i> Документы
+    </div>
+    <div class="body std-form">
+        <?php
+        echo $this->formElement($form->get('order_id'));
+        echo $this->formRowset([
+            [
+                ['width' => 100, 'element' => 'client_id'],
+            ],
+            [
+                ['width' => 100, 'element' => 'document_id'],
+            ],
+        ], $form);
+        ?>
+        <div class="btn download">Скачать в Word</div>
+    </div>
+
+    <script>
+        $(function () {
+            var form = $('.popup-order-documents');
+
+            $('.download', form).on('click', function () {
+                var data = {
+                    order_id: $('[name="order_id"]', form).val(),
+                    client_id: $('[name="client_id"]', form).val(),
+                    document_id: $('[name="document_id"]', form).val(),
+                };
+
+                if(data.client_id === '' || !data.document_id === '') {
+                    alert('Выберите контрагента и шаблон');
+                    return;
+                }
+
+                $url = new Url();
+                $url.setPath('/documents/get-filled/');
+                $url.setParams(data);
+
+                window.open($url.getUrl(),'_blank');
+            });
+        });
+    </script>
+
+    <style>
+        .popup-order-documents {
+            min-width: 525px;
+        }
+    </style>
+</div>

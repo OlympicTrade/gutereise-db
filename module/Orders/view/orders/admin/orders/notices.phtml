@@ -1,0 +1,119 @@
+<div class="notices-form">
+    <h1>Уведомления</h1>
+
+    <div class="notices">
+        <div class="notice" data-type="client">
+            <?php if($order->plugin('client')->get('email')) { ?>
+                <div class="box">
+                    <div class="title">Уведомление заказчику</div>
+                    <textarea class="std-textarea"><?php echo $clientMessage ?></textarea>
+                    <a href="#" class="btn">Отправить</a>
+                </div>
+                <div class="resp">
+                    Сообщение отправлено
+                </div>
+            <?php } else { ?>
+                <div class="title">У заказчика не указан телефон или e-mail</div>
+            <?php } ?>
+        </div>
+
+        <div class="notice" data-type="performer">
+            <?php if($order->plugin('guide')->get('email') || $order->plugin('performer')->get('email')) { ?>
+                <div class="box">
+                    <div class="title">Уведомление гиду</div>
+                    <textarea class="std-textarea"><?php echo $performerMessage ?></textarea>
+                    <a href="#" class="btn">Отправить</a>
+                </div>
+                <div class="resp">
+                    Сообщение отправлено
+                </div>
+            <?php } else { ?>
+                <div class="title">У исполнителя не указан телефон или e-mail</div>
+            <?php } ?>
+        </div>
+
+        <div class="notice" data-type="driver">
+            <?php if($order->plugin('driver')->get('email')) { ?>
+                <div class="box">
+                    <div class="title">Уведомление водителю</div>
+                    <textarea class="std-textarea"><?php echo $driverMessage ?></textarea>
+                    <a href="#" class="btn">Отправить</a>
+                </div>
+                <div class="resp">
+                    Сообщение отправлено
+                </div>
+            <?php } else { ?>
+                <div class="title">У водителя не указан телефон или e-mail</div>
+            <?php } ?>
+        </div>
+    </div>
+</div>
+
+<style>
+    .notices {
+        width: 600px;
+    }
+
+    .notices-form {
+        padding-right: 20px;
+    }
+
+    .notices-form .notice {
+        margin-bottom: 15px;
+        background: #d9d9d9;
+        border-radius: 6px;
+        padding: 10px;
+    }
+
+    .notices-form .notice .title {
+        font-size: 16px;
+        margin-bottom: 6px;
+    }
+
+    .notices-form .notice textarea {
+        height: 50px;
+        margin-bottom: 6px;
+        font-size: 14px;
+    }
+
+    .notices-form .notice .resp {
+        display: none;
+        font-size: 16pt;
+    }
+</style>
+
+<script>
+    $(function(){
+        var box = $('.notices-form');
+
+        $('.notice .btn', box).click(function(){
+            var notice = $(this).closest('.notice');
+            var msg = $('textarea', notice).val();
+            var type = notice.attr('data-type');
+            var url = '<?php echo $this->url('orders', array('action' => 'send-notice')); ?>';
+            var orderId = <?php echo $order->id() ?>;
+
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: {
+                    msg: msg,
+                    type: type,
+                    orderId: orderId
+                },
+                success: function(resp) {
+                    $('.box', notice).fadeOut(200, function(){
+                        if(resp.status) {
+                            $('.resp', notice).text('Сообщение отправлено').fadeIn();
+                        } else {
+                            $('.resp', notice).text('Ошибка при отправлении').fadeIn();
+                        }
+                    });
+                },
+                dataType: "json"
+            });
+
+            return false;
+        });
+    })
+</script>

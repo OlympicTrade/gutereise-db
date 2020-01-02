@@ -1,0 +1,74 @@
+.table-edit-documents {
+    .file-select {
+        display: block;
+        position: relative;
+        padding-left: 50px;
+        line-height: 40px;
+        height: 44px;
+        overflow: hidden;
+        border: 2px solid #0a73dc;
+        width: 300px;
+        transition: all ease .2s;
+        cursor: pointer;
+
+        &:before {
+            font-weight: 900;
+            font-family: "Font Awesome 5 Free";
+            content: "\f1c2";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 40px;
+            width: 40px;
+            text-align: center;
+            background: #0a73dc;
+            color: #ffffff;
+            font-size: 25px;
+        }
+
+        &:hover {
+            background: #0a73dc;
+            color: #ffffff;
+        }
+
+        input {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+    }
+
+    .instructions{
+        margin-top: 30px;
+
+        .row {
+            position: relative;
+            padding: 4px 10px 4px 190px;
+            cursor: pointer;
+
+            &:nth-child(2n - 1) {
+                background: #eeeeee;
+            }
+
+            &:hover {
+                background: #5f5f5f;
+                color: #fff;
+            }
+        }
+
+
+        .label {
+            position: absolute;
+            left: 10px;
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+    }
+}

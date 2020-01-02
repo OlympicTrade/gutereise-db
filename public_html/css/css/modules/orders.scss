@@ -1,0 +1,311 @@
+$background: #f6f6f6;
+$panelColor: #ffffff;
+
+$fontColor1: #000000;
+$fontColor2: #ffffff;
+
+$borderColor: #ececec;
+
+$grad1color1: #0080ff;
+$grad1color2: #21a5f8;
+
+$grad2color1: #6945d9;
+$grad2color2: #464df4;
+
+$grad3color1: #0bc837;
+$grad3color2: #76dc92;
+
+$borderColor1: #ececec;
+$borderColor2: #ff4d89;
+
+.order-form {
+    margin-bottom: 6px;
+
+    .order-days-tabs {
+        .tabs-header  {
+            .tab.error {
+                background: #ec2f2f;
+                color: #ffffff;
+            }
+
+            .tab.notice {
+                background: #ffe771;
+                color: #000;
+            }
+        }
+
+        .tabs-body {
+            .tab.error {
+                border: 3px solid #ec2f2f;
+            }
+
+            .tab.notice {
+                border: 3px solid #ffe771;
+            }
+        }
+    }
+
+    &.table-edit {
+        .summary {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 4px;
+            font-size: 15px;
+
+            & > * {
+                display: inline-block;
+                margin: 0 0 0 6px;
+            }
+
+            .std-checkbox {
+                vertical-align: middle;
+                font-size: 14px;
+            }
+        }
+    }
+
+    .sum-details {
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+    .day-excursion {
+        margin-bottom: 10px;
+    }
+}
+
+.calc-details-box {
+    max-width: 800px;
+    margin-top: 10px;
+
+    &.hotel-details {
+        margin-bottom: 0;
+    }
+
+    & > div:first-child {
+        border-radius: 5px 5px 0 0;
+        border-top: 2px solid $grad1color1;
+    }
+
+    & > div:last-child {
+        border-radius: 0 0 5px 5px;
+        border-bottom: 2px solid $grad1color1;
+    }
+
+    .sum .row {
+        position: relative;
+        background: $grad1color1;
+        padding: 3px 10px;
+        color: #ffffff;
+        font-size: 15px;
+        border-bottom: 1px solid #ffffff;
+
+        .switcher {
+            position: absolute;
+            right: 10px;
+            top: 3px;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    }
+
+    .error, .notice, .row, .title, .subtitle {
+        padding: 3px 10px;
+        border-left: 2px solid #3c74c7;
+        border-right: 2px solid #3c74c7;
+    }
+
+    .error {
+        background: #ec2f2f;
+        color: #ffffff;
+    }
+
+    .notice {
+        background: #ecbc00;
+        color: #ffffff;
+    }
+
+    .subtitle {
+        font-weight: 600;
+    }
+
+    .title {
+        margin-top: -1px;
+        border-top: 1px solid #3c74c7;
+        padding-top: 5px;
+        font-weight: 700;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    .row {
+        margin-bottom: 0;
+
+        &:nth-child(2n) {
+            background: #eeeeee;
+        }
+
+        &.sum {
+            background: #3c74c7;
+            color: #ffffff;
+            border-bottom: 1px solid #ffffff;
+        }
+
+        .key, .val {
+            display: inline-block;
+        }
+
+        .key {
+            vertical-align: top;
+            width: 110px;
+        }
+    }
+}
+
+.calc-form {
+    width: 620px;
+    padding: 10px;
+
+    & > .header {
+        font-weight: 700;
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .calc-block {
+        border: 1px solid #2d2d2d;
+
+        & > .header {
+            background: #2d2d2d;
+            color: #ffffff;
+            padding: 4px 10px;
+        }
+
+        & > .body {
+            padding: 10px 10px 4px 10px;
+        }
+    }
+
+    .hotels-form {
+        border: 2px solid #3c74c7;
+        margin-bottom: 10px;
+
+        & > .header {
+            color: #ffffff;
+            background: #3c74c7;
+            padding: 2px 10px;
+            cursor: pointer;
+        }
+
+        & > .body {
+            padding: 10px;
+        }
+
+        .hotel {
+            .header {
+                position: relative;
+
+                .del {
+                    color: #ffffff;
+                    position: absolute;
+                    right: 5px;
+                    top: 5px;
+                }
+            }
+
+            .name {
+                font-weight: 600;
+                font-size: 15px;
+                margin-bottom: 4px;
+            }
+        }
+    }
+
+    .sum-details {
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+}
+
+.calc-form .transports,
+.calc-form .museums {
+    margin-top: 5px;
+
+    .transport, .museum {
+        margin-top: 10px;
+        clear: both;
+    }
+
+    .info {
+        background: #eeeeee;
+        padding: 6px 12px;
+
+        .title {
+            height: 17px;
+            overflow: hidden;
+            word-break: break-all;
+        }
+
+        .duration,
+        .worktime {
+            font-size: 13px;
+        }
+    }
+
+    select, input {
+        height: 29px;
+        overflow: hidden;
+    }
+
+    .last {
+        position: relative;
+        padding-right: 35px;
+
+
+        .delete {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 29px;
+            width: 29px;
+            text-align: center;
+            line-height: 32px;
+            color: #ffffff;
+            background: #387dcf;
+            font-size: 15px;
+            cursor: pointer;
+        }
+    }
+}
+
+.calc-form .calc-tabs {
+    margin-bottom: 15px;
+
+    .tabs-header .tab.error {
+        background: #ec2f2f;
+        color: #ffffff;
+    }
+
+    .tabs-body .tab.error {
+        border: 3px solid #ec2f2f;
+    }
+}
+
+.calc-form .cbs .label {
+    margin: 8px 0 5px 0;
+}
+
+#calendar-orders {
+    .day {
+        .body {
+            transition: all ease .2s;
+
+            &:hover {
+                background: #e9faff;
+            }
+        }
+    }
+}

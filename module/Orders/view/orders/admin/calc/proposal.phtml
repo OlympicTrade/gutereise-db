@@ -1,0 +1,121 @@
+<form class="print-form">
+    <button data-fancybox-close="" class="fancybox-close-small"></button>
+    <div class="header">Коммерческое предложение</div>
+    <div class="body">
+        <div class="row">
+            <textarea class="text editor" name="proposal-text"><?php echo $text ?></textarea>
+        </div>
+        <div class="row">
+            <input class="std-input" name="email" placeholder="E-mail получателя">
+        </div>
+
+        <div class="btns">
+            <a class="btn print">Распечатать</a>
+            <a class="btn download" href="/calc/word/" >Скачать</a>
+            <span class="btn email">Отправить на почту</span>
+        </div>
+    </div>
+
+    <script>
+        $(function() {
+            var form  = $('.print-form');
+            var text  = $('[name="proposal-text"]', form);
+            var email = $('[name="email"]', form);
+
+            $('.btn.download', form).on('click', function() {
+                updateEditors();
+                $.ajax({
+                    url: '/calc/save-text/',
+                    type: 'post',
+                    data: {
+                        text: text.val()
+                    },
+                    success: function() {
+                        window.open('/calc/word/');
+                    }
+                });
+                return false;
+            });
+
+            $('.btn.print', form).on('click', function() {
+                updateEditors();
+
+                $.ajax({
+                    url: '/calc/save-text/',
+                    type: 'post',
+                    data: {
+                        text: text.val()
+                    },
+                    success: function() {
+                        window.open('/calc/print/', '_blank');
+                    }
+                });
+                return false;
+            });
+
+            email.on('keyup', function() {
+                email.closest('.row').removeClass('invalid');
+            });
+
+            $('.btn.email', form).on('click', function() {
+                var btn = $(this);
+                var row = email.closest('.row');
+                if(!email.val()) {
+                    row.addClass('invalid');
+                    return false;
+                }
+
+                btn.html('<i class="fa fa-circle-o-notch fa-spin"></i> Отправка');
+
+                updateEditors();
+                $.ajax({
+                    url: '/calc/save-text/',
+                    type: 'post',
+                    data: {
+                        text: text.val(),
+                    },
+                    success: function() {
+                        $.ajax({
+                            url: '/calc/email/',
+                            type: 'post',
+                            data: {
+                                email: email.val()
+                            },
+                            success: function(resp) {
+                                if(resp.status == 'success') {
+                                    btn.addClass('green').text('Сообщение отправлено');
+                                } else {
+                                    btn.addClass('red').text('Ошибка при отправке');
+                                }
+                            }
+                        }).fail(function() {
+                            btn.addClass('red').text('Ошибка при отправке');
+                        });
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+
+    <style>
+        .print-form {
+            width: 650px;
+            padding: 10px;
+        }
+
+        .print-form .header {
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .print-form .row {
+            margin-bottom: 15px;
+        }
+
+        .print-form .btns {
+            margin-top: 20px;
+        }
+    </style>
+</form>

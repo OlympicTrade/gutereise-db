@@ -1,0 +1,250 @@
+<div class="table-sidebar"></div>
+
+<?php
+$rendPeriod = function($balance, $header = null) {
+    if(!$header) {
+        $header = $this->date($balance['date']['from'], ['day' => false, 'month' => true]);
+    }
+
+    $html =
+        '<div class="period">'.
+            '<div class="header">'. $header . '</div>'.
+            '<div class="row">'.
+                '<div class="label">Доходы</div>'.
+                $this->price($balance['income']) .
+            '</div>'.
+            '<div class="row">'.
+                '<div class="label">Расходы</div>'.
+                $this->price($balance['outgo']) .
+            '</div>'.
+            '<div class="row summary">'.
+                '<div class="label">Итого</div>'.
+                $this->price($balance['income'] - $balance['outgo']) .
+            '</div>'.
+        '</div>';
+
+    return $html;
+}
+?>
+
+<div class="balance-list">
+    <?php echo $rendPeriod($balance['y'], date('Y') . ' год') ?>
+    <?php echo $rendPeriod($balance['1m']) ?>
+    <?php echo $rendPeriod($balance['2m']) ?>
+    <?php echo $rendPeriod($balance['3m']) ?>
+    <div class="clear"></div>
+</div>
+
+<style>
+    .balance-list {
+        margin-bottom: 40px;
+    }
+
+    .balance-list .period {
+        float: left;
+        margin-right: 20px;
+        width: 200px;
+        border: 2px solid #2e2e2e;
+    }
+
+    .balance-list .header {
+        background: #2e2e2e;
+        padding: 4px 6px;
+        color: #ffffff;
+    }
+
+    .balance-list .row {
+        position: relative;
+        border-bottom: 1px solid #2e2e2e;
+        text-align: right;
+        padding: 4px 6px;
+        height: 26px;
+    }
+
+    .balance-list .row .label {
+        position: absolute;
+        left: 6px;
+    }
+
+    .balance-list .row.summary {
+        font-weight: 700;
+    }
+</style>
+
+<?php /*
+<div class="tabs debts-tabs">
+    <div class="tabs-header">
+        <div class="tab" data-tab="transport">Транспорт</div>
+        <div class="tab" data-tab="guides">Гиды</div>
+        <div class="tab" data-tab="museums">Музеи</div>
+        <div class="tab" data-tab="clients">Клиенты</div>
+    </div>
+    <div class="tabs-body">
+        <div class="tab" data-tab="transport">
+            <?php echo $this->balanceList($transport, 'transport') ?>
+        </div>
+        <div class="tab" data-tab="guides">
+            <?php echo $this->balanceList($guides, 'guides') ?>
+        </div>
+        <div class="tab" data-tab="museums">
+            <?php echo $this->balanceList($museums, 'museums') ?>
+        </div>
+        <div class="tab" data-tab="clients">
+            <?php echo $this->balanceList($clients, 'clients') ?>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.debts-tabs').tabs();
+
+    var box = $('.debts-list');
+
+    var updateDebt = function(agent) {
+        var debt = 0;
+        $('.row.order .cb input:checked', agent).each(function () {
+            var row = $(this).closest('.row');
+            debt += parseInt(row.data('debt'));
+        });
+
+        var sumBox = $('.summary .sum', agent);
+
+        $('.set-paid', sumBox).css({display: (debt ? 'block' : 'none')});
+        $('.nbr', sumBox).text($.pipe.price(debt));
+    };
+
+    $('.cb input', $('.row.order', box)).on('change', function () {
+        updateDebt($(this).closest('.agent'));
+    });
+
+    $('.cb input', $('.row.summary', box)).on('change', function () {
+        var el = $(this);
+        el.closest('.agent').find('.row.order .cb input').prop('checked', el.is(':checked'));
+        updateDebt(el.closest('.agent'));
+    });
+
+    $('.set-paid', $('.row.summary', box)).on('click', function () {
+        var btn = $(this);
+        var agent = btn.closest('.agent');
+
+        var ids = [];
+        $('.row.order .cb input:checked', agent).each(function () {
+            ids.push($(this).val());
+            $(this).closest('.row').remove();
+        });
+
+        var sumBox = $('.summary .sum', agent);
+        $('.set-paid', sumBox).css({display: 'none'});
+        $('.nbr', sumBox).text(0);
+
+        $.ajax({
+            url: '/debts/set-paid/',
+            method: 'post',
+            data: {
+                type: btn.data('type'),
+                ids:  ids
+            },
+            success: function (resp) {
+            }
+        });
+    });
+</script>
+
+<style>
+    .debts-list {
+
+    }
+
+    .debts-list .agent {
+        width: 700px;
+        margin-bottom: 20px;
+        clear: both;
+    }
+
+    .debts-list .agent .header {
+        color: #ffffff;
+        background: #000000;
+    }
+
+    .debts-list .row {
+        clear: both;
+        position: relative;
+        height: 30px;
+        padding-left: 30px;
+    }
+
+    .debts-list .row .cell {
+        float: left;
+        padding: 6px 10px;
+        height: 30px;
+        overflow: hidden;
+        border-right: 1px solid #000;
+        border-bottom: 1px solid #000;
+    }
+
+    .debts-list .row .cb {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 30px;
+        width: 30px;
+        text-align: center;
+        border: 1px solid #000;
+    }
+
+    .debts-list .row .cb input {
+        height: 29px;
+        width: 29px;
+    }
+
+    .debts-list .row .date {
+        width: 17%;
+    }
+
+    .debts-list .row .order {
+        width: 68%;
+    }
+
+    .debts-list .row .dept {
+        width: 15%;
+    }
+
+    .debts-list .row.summary {
+        font-weight: 700;
+    }
+
+    .debts-list .row.header .name {
+        width: 85%;
+    }
+
+    .debts-list .row.header .dept {
+        width: 15%;
+    }
+
+    .debts-list .row.summary .notice {
+        width: 85%;
+        text-align: right;
+    }
+
+    .debts-list .row.summary .sum  {
+        position: relative;
+        width: 15%;
+    }
+
+    .debts-list .row.summary .set-paid  {
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 30px;
+        width: 30px;
+        padding: 0;
+        line-height: 30px;
+        display: none;
+
+    }
+
+    .debts-list {
+
+    }
+</style>
+ */ ?>
