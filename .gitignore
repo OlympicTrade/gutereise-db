@@ -1,0 +1,11 @@
+vendor
+data
+.idea
+config/autoload
+public_html/files
+public_html/mini
+composer.lock
+composer.phar
+changes.sql
+changes.txt
+*.zip
