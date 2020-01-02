@@ -71,7 +71,6 @@ class BalanceController extends AbstractController
         ];
     }
 
-
     /**
      * @return \Orders\Admin\Service\BalanceService
      */
