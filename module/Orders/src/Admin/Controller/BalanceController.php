@@ -46,9 +46,6 @@ class BalanceController extends AbstractController
                 $dt->year() . ' год' => $yBalance,
                 'Все время' => $aBalance,
             ]),
-            /*'balance' => [
-                'year' => $yBalance,
-            ],*/
             'date'    => $dt->format(),
             'year'    => $dt->year(),
             'month'   => $dt->month(),
@@ -71,10 +68,6 @@ class BalanceController extends AbstractController
                 '+1m' => $balanceService->getBalance((clone $from)->modify('-1 month'), (clone $to)->modify('-2 month')),
                 'y'  => $balanceService->getBalance(new \DateTime(date('Y-01-01')), new \DateTime(date('Y-12-31'))),
             ],
-            /*'transport' => $balanceService->getTransportBalance(),
-            'guides'    => $balanceService->getGuidesBalance(),
-            'museums'   => $balanceService->getMuseumsBalance(),
-            'clients'   => $balanceService->getClientsBalance(),*/
         ];
     }
 /*
