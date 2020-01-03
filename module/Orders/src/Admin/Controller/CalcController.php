@@ -247,7 +247,7 @@ class CalcController extends AbstractController
 
         $tours->select()
             ->where
-                ->greaterThan('days',0)
+                //->greaterThan('days',0)
                 ->addPredicate($where);
 
         $firstDay = Date::getDT($date['first']);
