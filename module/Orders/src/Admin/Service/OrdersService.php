@@ -264,8 +264,8 @@ class OrdersService extends TableService
         $dataToCalc['hotels'] = $this->getFormalizeHotelsData($order);
 
         $clients = [];
-        foreach ($order->plugin('clients') as $oClient) {
-            $client = $oClient->plugin('client');
+        foreach ($order->clients() as $oClient) {
+            $client = $oClient->client();
             $clients[] = [
                 'id' => $oClient->get('client_id'),
                 'name'      => $client->get('name'),
@@ -478,11 +478,11 @@ class OrdersService extends TableService
     {
         $calcData = $this->calcOrder($order, ['calc_type' => 'proposal']);
 
-        if(!$order->get('options')->proposal->generalize) {
+        if(!$order->options['proposal']['generalize']) {
             return $this->getProposalService()->getProposalData($calcData, $options);
         }
 
-        $days = $order->plugin('days');
+        $days = $order->days();
         if($days->count() > 1) {
             $daysIds = [];
             foreach ($days as $day) {

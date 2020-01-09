@@ -156,30 +156,6 @@ class Sidebar extends AbstractHelper
             }
         }
 
-        /*$html .=
-            '<div class="bottom">'.
-                '<a href="/logout/" class="btn blue" title="Выйти"><i class="fa fa-power-off"></i></a>';
-
-        if(Users\Model\User::getInstance()->plugin('role')->get('name') == 'Админ') {
-            switch (MODE) {
-                case 'dev':
-                    $html .=
-                        '<span class="btn red mode" data-mode="dev" title="Режим разработчика"><i class="fas fa-flask"></i></span>';
-                    break;
-                case 'test':
-                    $html .=
-                        '<span class="btn yellow mode" data-mode="test" title="Тестовый режим"><i class="fas fa-flask"></i></span>';
-                    break;
-                case 'public':
-                    $html .=
-                        '<span class="btn mode" data-mode="public" title="Публичный режим"><i class="fas fa-flask"></i></span>';
-                    break;
-            }
-        }
-
-        $html .=
-                '</div>';*/
-
         $html .=
             '</div>';
 

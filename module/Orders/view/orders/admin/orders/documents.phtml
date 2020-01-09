@@ -4,15 +4,15 @@
     </div>
     <div class="body std-form">
         <?php
-        echo $this->formElement($form->get('order_id'));
-        echo $this->formRowset([
+        $factory = $this->formFactory()->setForm($form);
+
+        echo $factory->structure([
+            ['order_id'],
             [
                 ['width' => 100, 'element' => 'client_id'],
-            ],
-            [
                 ['width' => 100, 'element' => 'document_id'],
-            ],
-        ], $form);
+            ]
+        ]);
         ?>
         <div class="btn download">Скачать в Word</div>
     </div>

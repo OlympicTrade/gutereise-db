@@ -325,13 +325,14 @@ class ProposalService extends TableService
             $sumStr .= implode($br . '- ', $priceTable);
         }
 
+        $hotelSum = '';
         if($data['hotels']) {
             foreach ($data['hotels']['hotels'] as $hotelData) {
                 $hotel = new Hotel();
                 $hotel->id($hotelData['id']);
                 $daysCount = $data['hotels']['days_count'];
 
-                $sumStr .=
+                $hotelSum .=
                     '<p data-link="group:clients|anchor:hotels">' .
                     'Проживание в гостинице ' . $hotel->get('name').
                     ($daysCount > 1 ? ' в течении ' . $daysCount . ' дней' : '');
@@ -342,26 +343,27 @@ class ProposalService extends TableService
 
                     $roomsCount = ceil($roomData['tourists'] / $room->get('capacity'));
 
-                    $sumStr .=
+                    $hotelSum .=
                         $br.
                         $roomsCount . ' x ' . $room->get('name');
 
                     switch ($roomData['breakfast']) {
                         case Hotel::BREAKFAST_BUFFET:
-                            $sumStr .= ' + завтрак "Шведский стол"';
+                            $hotelSum .= ' + завтрак "Шведский стол"';
                             break;
                         case Hotel::BREAKFAST_CONTINENTAL:
-                            $sumStr .= ' + континентальный завтрак';
+                            $hotelSum .= ' + континентальный завтрак';
                             break;
                         default:
                             break;
                     }
                 }
-                $sumStr .= '<p>';
+                $hotelSum .= '</p>';
             }
         }
 
         $result['summary'] = $sumStr;
+        $result['hotel']   = $hotelSum;
         $result['common']  = $commonStr;
 
         return $result;
@@ -432,7 +434,7 @@ class ProposalService extends TableService
             }
         }
 
-        if($dayData['day_id']) {
+        /*if($dayData['day_id']) {
             $exDay = new ExcursionDay(['id' => $dayData['day_id']]);
 
             $excursionProp = $exDay->plugin('attrs')->get('proposal_price');
@@ -441,7 +443,7 @@ class ProposalService extends TableService
                 if(!$row) continue;
                 $priceTable[] = $tr->tr($row);
             }
-        }
+        }*/
 
         return array_unique($priceTable);
     }
@@ -692,6 +694,9 @@ class ProposalService extends TableService
 
         $str .=
             $data['summary'];
+
+        $str .=
+            $data['hotel'];
 
         $str = preg_replace('/\s\s+/', ' ', $str);
 

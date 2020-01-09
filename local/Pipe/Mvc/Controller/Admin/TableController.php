@@ -213,11 +213,13 @@ class TableController extends AbstractController
 
                 return new JsonModel([
                     'status' => 1,
+                    'id'     => $model->id(),
                     //'data'   => $model->serializeArray()
                 ]);
             } else {
                 return new JsonModel([
                     'status' => 0,
+                    'id'     => $model->id(),
                     'errors' => $editForm->getMessages()
                 ]);
             }

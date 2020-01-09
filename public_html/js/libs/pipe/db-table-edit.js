@@ -1,13 +1,13 @@
-let DbShortTables = function (box, options) {
+var DbShortTables = function (box, options) {
     this.box = box;
     this.changeTimer = null;
 
-    let pattern = $('.pattern', box);
-    let list = $('.list', box);
-    let name = box.data('prefix') + '';
-    let insetId = 0;
+    var pattern = $('.pattern', box);
+    var list = $('.list', box);
+    var name = box.data('prefix') + '';
+    var insetId = 0;
 
-    let obj = this;
+    var obj = this;
 
     this.on = function(event, fn) {
         $(this).on(event, fn);
@@ -29,14 +29,14 @@ let DbShortTables = function (box, options) {
     });
 
     $('input, select, textarea', pattern).each(function () {
-        let el = $(this);
+        var el = $(this);
         el.attr('data-name', el.attr('name'));
         el.attr('name', '');
     });
 
     list.on('change', '[data-type="collection"]', function() {
-        let el = $(this);
-        let cell = el.closest('.cell');
+        var el = $(this);
+        var cell = el.closest('.cell');
         $('[data-action="view"]', cell).css('display', (el.val() ? 'block' : 'none'));
     });
 
@@ -44,9 +44,9 @@ let DbShortTables = function (box, options) {
 
     function updateSelect(module, select, val) {
         $.ajax({
-            url: getUrl({module: module, section: section, action: 'get-list-data'}),
+            url: getUrl({module: module.module, section: module.section, action: 'get-list-data'}),
             success: function(resp) {
-                let html = '<option value="0">Не выбран</option>';
+                var html = '<option value="0">Не выбран</option>';
 
                 resp.forEach(function(row) {
                     html += '<option value="' + row.id + '">' + row.label + '</option>';
@@ -65,11 +65,11 @@ let DbShortTables = function (box, options) {
     }
 
     list.on('click', '[data-action="view"]', function() {
-        let el = $(this);
-        let cell = el.closest('.cell');
-        let select = $('select', cell);
-        let section = cell.data('section');
-        let module = cell.data('module');
+        var el = $(this);
+        var cell = el.closest('.cell');
+        var select = $('select', cell);
+        var section = cell.data('section');
+        var module = cell.data('module');
 
         $.fancybox.open({
             src: getUrl({module: module, section: section, action: 'edit', id: $('select', cell).val()}),
@@ -88,29 +88,30 @@ let DbShortTables = function (box, options) {
                         }
                     });
                     initElements(slide.$slide);
-                    let options = {
-                        save: {
-                            callback: function(resp) {
-                                updateSelect(module, select);
-                            },
-                            delete: function() {
-                                updateSelect(module, select, 0);
-                            }
-                        }
-                    };
 
-                    initTableEdit($('.table-edit', slide.$slide), options);
+                    initTableEdit($('.table-edit', slide.$slide), {
+                        onSave: function(resp) {
+                            $.fancybox.close();
+                            updateSelect({module, section}, select, resp.id);
+                        },
+                        onDelete: function() {
+                            $.fancybox.close();
+                            updateSelect({module, section}, select, 0);
+                        },
+                        reload: false,
+                        sidebar: $('.sidebar', slide.$slide)
+                    });
                 }
             }
         });
     });
 
     list.on('click', '[data-action="edit"]', function() {
-        let el = $(this);
-        let cell = el.closest('.cell');
-        let select = $('select', cell);
-        let section = cell.data('section');
-        let module  = cell.data('module');
+        var el = $(this);
+        var cell = el.closest('.cell');
+        var select = $('select', cell);
+        var section = cell.data('section');
+        var module  = cell.data('module');
 
         $.fancybox.open({
             src: getUrl({module: module, section: section, action: 'edit'}),
@@ -128,26 +129,28 @@ let DbShortTables = function (box, options) {
                             $.fancybox.close()
                         }
                     });
-                    initElements(slide.$slide);
-                    let options = {
-                        save: {
-                            callback: function(resp) {
-                                updateSelect(module, select, resp.data.id);
-                            },
-                            delete: function() {
-                                updateSelect(module, select, 0);
-                            }
-                        }
-                    };
 
-                    initTableEdit($('.table-edit', slide.$slide), options);
+                    initElements(slide.$slide);
+
+                    initTableEdit($('.table-edit', slide.$slide), {
+                        onSave: function(resp) {
+                            $.fancybox.close();
+                            updateSelect({module, section}, select, resp.id);
+                        },
+                        onDelete: function() {
+                            $.fancybox.close();
+                            updateSelect({module, section}, select, 0);
+                        },
+                        reload: false,
+                        sidebar: $('.sidebar', slide.$slide)
+                    });
                 }
             }
         });
     });
 
     this.updateSort = function() {
-        let sortId = 0;
+        var sortId = 0;
         $('.item', list).each(function () {
             $(this).find('input.sort').val(sortId);
             sortId++;
@@ -172,15 +175,15 @@ let DbShortTables = function (box, options) {
     };
 
     this.copyItem = function(item) {
-        let newItem = item.clone();
+        var newItem = item.clone();
 
         insetId++;
-        let nameReplace = box.data('name') + '[' + 'new-' + insetId + ']';
+        var nameReplace = box.data('name') + '[' + 'new-' + insetId + ']';
 
         newItem.attr('data-id', null);
         $('.row-acts input', newItem).remove();
         $('input, select, textarea', newItem).each(function() {
-            let el = $(this);
+            var el = $(this);
             el
                 .val($('[name="' + el.attr('name') + '"]', item).val())
                 .attr('name', el.attr('name').replace(/.+\[\d+\]/, nameReplace))
@@ -194,14 +197,14 @@ let DbShortTables = function (box, options) {
         obj.updateSort();
     };
 
-    let getRow = function () {
+    var getRow = function () {
         insetId++;
-        let item = pattern.clone();
+        var item = pattern.clone();
         item.removeClass('pattern');
 
         $('input, select, textarea', item).each(function () {
-            let el = $(this);
-            let name = el.data('name').replace(/_ID_/, 'new-' + insetId);
+            var el = $(this);
+            var name = el.data('name').replace(/_ID_/, 'new-' + insetId);
 
             /*if(obj.options.replace !== null) {
                 name = obj.options.replace(name, insetId);
@@ -215,14 +218,14 @@ let DbShortTables = function (box, options) {
     };
 
     this.addItem = function(vals, options) {
-        let item = getRow();
+        var item = getRow();
 
         options = $.extend({
             triggers: ['update', 'add'],
         }, options);
 
         if(vals !== undefined) {
-            let i = 0;
+            var i = 0;
             $('input, select, textarea', $('.cell', item)).each(function () {
                 $(this).val(vals[i]);
                 i++;
@@ -271,7 +274,7 @@ let DbShortTables = function (box, options) {
 
     $(box).on('click', '.item-edit', function(){
         $('.item', box).removeClass('edit');
-        let item = $(this).closest('.item').addClass('edit');
+        var item = $(this).closest('.item').addClass('edit');
 
         $('input, textarea', form).each(function() {
             $(this).val($('[name="' + $(this).data('name') + '"]', item).val());
@@ -287,8 +290,8 @@ let DbShortTables = function (box, options) {
 };
 
 $.fn.dbShortTables = function (options) {
-    let initDE = function(el) {
-        let sl = el.data('db-short-table');
+    var initDE = function(el) {
+        var sl = el.data('db-short-table');
 
         if (sl === undefined || sl === '') {
             sl = new DbShortTables(el, options);
@@ -309,36 +312,41 @@ $.fn.dbShortTables = function (options) {
     return this;
 };
 
-let DbTableEdit = function (form, options) {
-    let obj = this;
-    let sidebar = $.pipe.template.getModuleMenu();
-    let module  = form.data('module');
-    let section = form.data('section');
-    let id = $('[name="id"]', form).val();
+var DbTableEdit = function (form, mainOpts) {
+    mainOpts = $.extend({
+        sidebar:    $.pipe.template.getModuleMenu(),
+        reload:     true,
+        onSave:     false,
+        onDelete:   false,
+    }, mainOpts);
+
+    var obj = this;
+    var module  = form.data('module');
+    var section = form.data('section');
+    var id = $('[name="id"]', form).val();
+    var sidebar = mainOpts.sidebar;
 
     if(!id || id == 0) {
         $('.item-del', sidebar).addClass('hidden');
     }
 
-    this.save = function(options) {
-        options = $.extend({
-            success: false,
-        }, options);
+    this.save = function(opts) {
+        opts = $.extend(mainOpts, opts);
 
         updateEditors();
-        let message = new Message();
+        var message = new Message();
         message.setLoading({icon: 'far fa-list-alt'});
 
-        let url = '';
-        if(options.btn !== undefined && options.btn.data('url')) {
-            url = options.btn.data('url');
+        var url = '';
+        if(opts.btn !== undefined && opts.btn.data('url')) {
+            url = opts.btn.data('url');
         } else if(form.attr('action') !== '') {
             url = form.attr('action');
         } else {
             url = getUrl({module: module, section: section, action: 'edit', id: id});
         }
 
-        let ajaxOpts = {
+        var ajaxOpts = {
             url: url,
             method: 'post',
             data: form.serializeArray(),
@@ -348,12 +356,12 @@ let DbTableEdit = function (form, options) {
                 if(resp.status == 1) {
                     message.setMessage({icon: 'far fa-list-alt', text: 'Сохранено'});
 
-                    if(options.success) {
-                        options.success(resp);
+                    if(opts.onSave !== false) {
+                        opts.onSave(resp);
                     }
                 } else {
                     $.each(resp.errors, function (name, errors) {
-                        let field = $('[name="' + name + '"]', form);
+                        var field = $('[name="' + name + '"]', form);
 
                         if(!field.length || !field.closest('.element').length) { dd('Не найдено поле ' + name) }
 
@@ -376,10 +384,8 @@ let DbTableEdit = function (form, options) {
         $.ajax(ajaxOpts);
     };
 
-    this.del = function(options) {
-        options = $.extend({
-            success: false
-        }, options);
+    this.del = function(opts) {
+        opts = $.extend(mainOpts, opts);
 
         $.ajax({
             url: getUrl({module: module, section: section, action: 'delete', id: id}),
@@ -389,30 +395,30 @@ let DbTableEdit = function (form, options) {
                 if(!parseInt($resp['status'])) {
                     alert('При удалении произошла ошибка');
                 } else {
-                    location.href = getUrl({module: module, section: section})
+
+                    if(opts.onDelete !== false) {
+                        opts.onDelete();
+                    }
+
+                    if(opts.reload) {
+                        location.href = getUrl({module: module, section: section})
+                    }
                 }
             }
         });
     };
 
     $('.item-save', sidebar).on('click', function(){
-        let btn = $(this);
+        obj.save();
+        /*var btn = $(this);
         obj.save({
             btn: btn,
-            success: function () {
-                if($('[name*="new-"]', form).length) {
-                    //location.reload();
-                }
-
+            onSave: function () {
                 if(btn.closest('.fancybox-container').length) {
                     $.fancybox.close();
                 }
-
-                if(btn.data('redirect') === 'reload') {
-                    //location.reload();
-                }
             }
-        });
+        });*/
     });
 
     $('.item-del', sidebar).on('click', function() {
@@ -427,8 +433,8 @@ let DbTableEdit = function (form, options) {
 };
 
 $.fn.dbTableEdit = function (options) {
-    let initDE = function(el) {
-        let sl = el.data('db-table-edit');
+    var initDE = function(el) {
+        var sl = el.data('db-table-edit');
 
         if (sl === undefined || sl === '') {
             sl = new DbTableEdit(el, options);

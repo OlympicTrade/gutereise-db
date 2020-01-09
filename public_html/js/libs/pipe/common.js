@@ -1,5 +1,3 @@
-var globals = {};
-
 var fn = {};
 $.pipe = fn;
 

@@ -1,5 +1,5 @@
 <?php
-namespace Documents\Service;
+namespace Documents\Admin\Service;
 
 use Application\Common\Model\Settings;
 use Pipe\Mvc\Service\Admin\TableService;
@@ -33,6 +33,7 @@ class DocumentsService extends TableService
         if($client) {
             $vals += $this->companyData($client, 'kontr_');
         }
+        //dd($vals);
 
         if($order) {
             $vals += $this->orderData($order);
@@ -62,6 +63,7 @@ class DocumentsService extends TableService
         $br = '<w:br/>';
         $vals = [];
 
+        $order->options['proposal']['generalize'] = true;
         $pData = $this->getOrdersService()->getOrderProposalData($order, ['br' => $br]);
 
         $programm = new TextRun();
@@ -75,22 +77,23 @@ class DocumentsService extends TableService
                 $programm->addText($br);
             }
 
-            $programm->addText($day['timetable'] . $br);
+            $programm->addText(strip_tags($day['timetable']) . $br);
 
-            if($i > 1 && $i != $daysCount) {
+            if(/*$i > 1 && */$i != $daysCount) {
                 $programm->addText($br);
             }
         }
+        //dd($pData['summary']);
 
         $vals['order_program']   = $programm;
         $vals['order_group']     = $pData['group'];
-        $vals['order_price']     = Price::nbrToStr($order->get('income'));
-        $vals['order_price_txt'] = Price::priceToWords($order->get('income'));
+        $vals['order_price']     = Price::nbrToStr($order->income);
+        $vals['order_price_txt'] = Price::priceToWords($order->income);
         $vals['order_summary']   = $pData['summary'];
 
         return $vals;
 
-        $table = new Table(['borderSize' => 1, 'borderColor' => 'black', 'width' => 10000, 'unit' => TblWidth::TWIP]);
+        /*$table = new Table(['borderSize' => 1, 'borderColor' => 'black', 'width' => 10000, 'unit' => TblWidth::TWIP]);
         $table->addRow();
         $table->addCell(150)->addText('Cell A1');
         $table->addCell(150)->addText('Cell A2');
@@ -111,7 +114,7 @@ class DocumentsService extends TableService
 
         $vals['test'] = $title;
 
-        return $vals;
+        return $vals;*/
     }
 
     protected function companyData($model, $prefix)

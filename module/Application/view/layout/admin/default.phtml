@@ -46,6 +46,11 @@ if(!ONLINE) {
 <html lang="ru">
 <head>
     <meta charset="utf-8">
+    <script>
+        var globals = {};
+        globals['module']  = '<?= $this->module ?>';
+        globals['section'] = '<?= $this->section ?>';
+    </script>
     <?php
     echo $this->headTitle() . "\n";
     echo $this->headMeta()  . "\n";
@@ -90,10 +95,5 @@ if(!ONLINE) {
             <?= $this->content; ?>
         </div>
     </div>
-
-    <script>
-        globals['module']  = '<?= $this->module ?>';
-        globals['section'] = '<?= $this->section ?>';
-    </script>
 <body>
 </html>

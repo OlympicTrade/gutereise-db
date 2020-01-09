@@ -13,7 +13,7 @@ abstract class AbstractController extends \Pipe\Mvc\Controller\AbstractControlle
 
         $this->layout('layout/admin');
 
-        $header = 'База данных';
+        $header = $module->name;
 
         $view = new ViewModel();
         $view->setVariables([
@@ -24,8 +24,13 @@ abstract class AbstractController extends \Pipe\Mvc\Controller\AbstractControlle
         ]);
 
         if($this->isAjax()) {
-            $view->setTerminal(true);
+            $this->layout('layout/ajax');
+            $this->layout()->setVariables([
+                'header' => $header,
+            ]);
             return $view;
+        } else {
+            $this->layout('layout/admin');
         }
 
         try {

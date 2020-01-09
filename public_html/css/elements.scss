@@ -556,8 +556,8 @@ fieldset {
     }
 
     &:before {
-        font-weight: 900;
-        font-family: "Font Awesome 5 Free";
+        font-weight: 300;
+        font-family: 'Font Awesome 5 Pro';
         content: "\f1c2";
         position: absolute;
         left: 0;
@@ -719,22 +719,49 @@ fieldset {
     }
 }
 
-
 .std-popup {
+    .fancybox-close-small {
+        display: none;
+    }
 
+    & > .header {
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: 15px 140px 6px 28px;
+        background: #ececec;
+        color: #000;
+        font-size: 19px;
+        min-height: 52px;
+        width: 100%;
+        z-index: 1;
+
+        .sidebar {
+            position: absolute;
+            right: 28px;
+            top: 8px;
+
+            .btn {
+                color: #ffffff;
+                border-radius: 50%;
+                border: none;
+                width: 35px;
+                height: 35px;
+                line-height: 35px;
+                padding: 0;
+                background: $grad1color1;
+
+                &.close {
+                    background: #808080;
+                }
+            }
+        }
+    }
+
+    & > .body {
+        padding: 62px 0 0 0;
+    }
 }
-
-.std-popup .header {
-    padding: 10px 20px;
-    background: #000000;
-    color: #ffffff;
-    font-size: 19px;
-}
-
-.std-popup .body {
-    padding: 20px;
-}
-
 
 .smart-list {
     .header {

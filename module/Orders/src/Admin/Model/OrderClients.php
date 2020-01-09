@@ -20,11 +20,10 @@ class OrderClients extends Entity
             'plugins'    => [
                 'client' => [
                     'factory' => function($model){
-                        return new Client(['id' => $model->get('client_id')]);
+                        //dd($model->client_id);
+                        return new Client(['id' => $model->client_id]);
                     },
-                    'options' => [
-                        'independent' => true,
-                    ],
+                    'independent' => true,
                 ],
             ],
         ];
