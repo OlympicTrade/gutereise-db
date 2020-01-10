@@ -1,0 +1,12 @@
+{
+    "deploy.reloaded": {
+        "targets": [
+            {
+                "type": "local",
+                "name": "My local folder",
+                "description": "A local folder",
+                "dir": "E:/test/my_package_files"
+            }
+        ]
+    }
+}

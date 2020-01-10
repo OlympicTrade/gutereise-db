@@ -434,17 +434,6 @@ class ProposalService extends TableService
             }
         }
 
-        /*if($dayData['day_id']) {
-            $exDay = new ExcursionDay(['id' => $dayData['day_id']]);
-
-            $excursionProp = $exDay->plugin('attrs')->get('proposal_price');
-
-            foreach (explode("\n", $excursionProp) as $row) {
-                if(!$row) continue;
-                $priceTable[] = $tr->tr($row);
-            }
-        }*/
-
         return array_unique($priceTable);
     }
 
