@@ -1,12 +1,32 @@
 {
     "deploy.reloaded": {
+        "packages": [
+            {
+                "name": "GR DB",
+                "files": [
+                    "**",
+                ],
+                "exclude": [
+                    "data/**",
+                    "vendor/**",
+                    "public_html/files/**",
+                    ".vscode",
+                ]
+            }
+        ],
         "targets": [
             {
-                "type": "local",
-                "name": "My local folder",
-                "description": "A local folder",
-                "dir": "E:/test/my_package_files"
-            }
+                "type": "ftp",
+                "name": "GR DB FTP",
+
+                "dir": "/database_new",
+                "host": "localhost", "port": 21,
+                "user": "tester", "password": "password",
+
+                "mappings": {
+                    "/dir/of/files/that/should/be/mapped/**/*": "dir/on/target"
+                }
+            },
         ]
     }
 }

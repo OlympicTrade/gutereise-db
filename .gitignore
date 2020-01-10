@@ -9,3 +9,5 @@ composer.phar
 changes.sql
 changes.txt
 *.zip
+.vscode
+.gitignore
