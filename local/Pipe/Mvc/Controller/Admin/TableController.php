@@ -258,8 +258,9 @@ class TableController extends AbstractController
         ];
 
         $view->setVariables([
-            'structure' => $structure,
-            'form'      => $editForm,
+            'structure'   => $structure,
+            'form'        => $editForm,
+            'headerBtns'  => 'tableEdit',
             strtolower($module->model()) => $model,
         ]);
 

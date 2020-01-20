@@ -71,8 +71,12 @@ var DbShortTables = function (box, options) {
         var section = cell.data('section');
         var module = cell.data('module');
 
+        if(select.val() === '') {
+            return false;
+        }
+
         $.fancybox.open({
-            src: getUrl({module: module, section: section, action: 'edit', id: $('select', cell).val()}),
+            src: getUrl({module: module, section: section, action: 'edit', id: select.val()}),
             type: 'ajax',
             smallBtn : true,
             opts: {

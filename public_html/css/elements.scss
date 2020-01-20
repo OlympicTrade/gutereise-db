@@ -738,7 +738,7 @@ fieldset {
 
         .sidebar {
             position: absolute;
-            right: 28px;
+            right: 8px;
             top: 8px;
 
             .btn {
@@ -759,7 +759,8 @@ fieldset {
     }
 
     & > .body {
-        padding: 62px 0 0 0;
+        padding: 75px 28px 30px 28px;
+        //padding: 62px 0 0 0;
     }
 }
 

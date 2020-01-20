@@ -99,7 +99,7 @@ function getUrl(opts) {
         url += opts.action + '/';
     }
 
-    if ('id' in opts) {
+    if ('id' in opts && opts.id !== '') {
         url += opts.id + '/';
     }
 

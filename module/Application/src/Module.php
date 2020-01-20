@@ -4,7 +4,7 @@ namespace Application;
 use Pipe\Db\Entity\ConfigCollector;
 use Zend\Mvc\MvcEvent;
 use Zend\Db\TableGateway\Feature\GlobalAdapterFeature as StaticDbAdapter;
-use Pipe\Cache\Feature\GlobalAdapterFeature as StaticCacheAdapter;
+use Pipe\Cache\CacheFactory as StaticCacheAdapter;
 use Zend\Mvc\Controller\AbstractActionController;
 
 use Pipe\Compressor\Compressor;
@@ -20,17 +20,22 @@ class Module
         $em  = $app->getEventManager();
         $sEm = $em->getSharedManager();
 
-        StaticDbAdapter::setStaticAdapter($app->getServiceManager()->get('DbAdapter'));
+        StaticDbAdapter::setStaticAdapter($sm->get('Zend\Db\Adapter\Adapter'));
+        $sm->get('Zend\Db\Adapter\Adapter')->getProfiler()->getQueryProfiles();
 
         $sEm->attach(AbstractActionController::class,MvcEvent::EVENT_DISPATCH,
             function(MvcEvent $e) {
                 $sm = $e->getApplication()->getServiceManager();
-                //StaticDbAdapter::setStaticAdapter($sm->get('DbAdapter'));
-                StaticCacheAdapter::setStaticAdapter($sm->get('DataCache'));
+                StaticCacheAdapter::setAdapter($sm->get('HtmlCache'), 'html');
             }, 200);
 
         $sEm->attach(AbstractActionController::class, MvcEvent::EVENT_DISPATCH,
             [$this, 'preDispatch'], 50);
+
+        $sEm->attach(AbstractActionController::class, MvcEvent::EVENT_DISPATCH, function() use ($sm) {
+            $sm->get('Zend\Db\Adapter\Adapter')->getProfiler()->getQueryProfiles();
+            //dd($sm->get('Zend\Db\Adapter\Adapter')->getProfiler()->getQueryProfiles());
+        });
 
         $sm->get('ViewHelperManager')->get('FormElement')
             ->addClass(PElement\EArray::class, PHelper\EArray::class)

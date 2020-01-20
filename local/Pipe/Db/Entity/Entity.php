@@ -48,7 +48,7 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
     const EVENT_POST_LOAD   = 'load.post';
 
     /** @var bool */
-    protected $saved = false;
+    protected $loaded = false;
 
     /** @var int */
     protected $id = 0;
@@ -226,8 +226,8 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
             return $this->id;
         }
 
-        if ($this->id !== 0 && $id != $this->id) {
-            $this->clear();
+        if($id == 0) {
+            $this->loaded = false;
         }
 
         $this->id = (int) $id;
@@ -238,10 +238,10 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
     /**
      * @return bool
      */
-    public function isSaved()
+    /*public function isSaved()
     {
         return $this->saved;
-    }
+    }*/
 
     /**
      * @param bool $transaction
@@ -352,7 +352,7 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
         }
 
         $this->loaded = true;
-        $this->saved = true;
+        //$this->saved = true;
 
         //$this->cacheClear();
 
@@ -394,7 +394,7 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
 
         $this->id($result[$this->primary]);
 
-        $this->saved = true;
+        //$this->saved = true;
 
         //$this->cacheSave();
 
@@ -514,9 +514,9 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
         $this->plugins = [];
         $this->clearSelect();
 
-        $this->id = 0;
-        $this->loaded = false;
-        $this->saved = false;
+        $this->id(0);
+        //$this->loaded = false;
+        //$this->saved = false;
 
         return $this;
     }
@@ -799,11 +799,43 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
     /** @return $this */
     public function getClearCopy()
     {
-        $copy = clone $this;
+        $class = get_class($this);
+        return new $class();
+
+        /*$copy = clone $this;
         $copy->clear();
 
-        return $copy;
+        return $copy;*/
     }
+
+    /*public function getCopy($type = 'full')
+    {
+        $class = get_class($this);
+        $clone = new $class;
+
+        if($type == 'clear') {
+            return $clone;
+        }
+
+        foreach($clone->properties as $name => &$property) {
+            $property['container'] = clone $property['container'];
+            $property['container']->isChanged(true);
+        }
+
+        foreach($this->getConfig()->get('plugins') as $pluginName => $pluginOpts) {
+            if(is_array($pluginOpts) && $pluginOpts['independent']) {
+                continue;
+            }
+
+            if(!($plugin = $this->plugin($pluginName)->load())) {
+                continue;
+            }
+
+            $this->plugins[$pluginName]['object'] = $plugin->getCopy()->setParent($this);
+        }
+
+        $this->id(0);
+    }*/
 
     public function __clone()
     {
@@ -826,9 +858,9 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
             $this->plugins[$pluginName]['object'] = (clone $plugin)->setParent($this);
         }
 
-        $this->id = 0;
-        $this->loaded = false;
-        $this->saved = false;
+        $this->id(0);
+        //$this->loaded = false;
+        //$this->saved = false;
 
         return $this;
     }
@@ -937,13 +969,13 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
             }
         }
 
-        $this->loaded = true;
+        //$this->loaded = true;
 
         foreach($dataPlugins as $pluginName => $pluginData) {
             $this->plugin($pluginName)->unserializeArray($pluginData);
         }
 
-        $this->loaded = true;
+        //$this->loaded = true;
 
         return $this;
     }

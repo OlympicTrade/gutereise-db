@@ -36,7 +36,7 @@ function d($data = '') {
 }
 
 function dd($data = '') {
-    echo d($data);
+    d($data);
     die();
 }
 

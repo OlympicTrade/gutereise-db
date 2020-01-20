@@ -2,7 +2,7 @@
 namespace Pipe\View\Helper\Admin;
 
 use Application\Admin\Model\Menu;
-use Application\Admin\Model\Module;
+use Pipe\Cache\CacheFactory;
 use Pipe\Db\Entity\EntityCollectionHierarchy;
 use Users\Common\Model\User;
 use Zend\View\Helper\AbstractHelper;
@@ -11,10 +11,29 @@ class Nav extends AbstractHelper
 {
     public function __invoke($class = '')
     {
+        $role =  User::getInstance()->getRoleName();
+
+        $cache = CacheFactory::getCache('admin_nav_' . $role, 'html');
+
+        if($cache->has()) {
+            return $cache->get();
+        }
+
+        $data = $this->generate($class);
+        $cache->set($data)
+            ->setTags(['admin_nav'])
+            ->save();
+
+        return $data;
+    }
+
+    public function generate($class = '')
+    {
         $view = $this->getView();
         $nav = $this->getNavItems();
 
         $role =  User::getInstance()->getRoleName();
+
         $checkRights = function($item) use ($role) {
             $allow = $item->access->deny;
             $deny = $item->access->deny;
@@ -28,9 +47,6 @@ class Nav extends AbstractHelper
             }
 
             return false;
-
-            /*$resource = $val['label'] . ' - ' . $val['module'] . '/' . (isset($val['section']) ? $val['section'] : $val['module']);
-            return $user->checkRights($resource);*/
         };
 
         foreach ($nav as $key => &$row) {

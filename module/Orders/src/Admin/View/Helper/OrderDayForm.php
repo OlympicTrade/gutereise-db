@@ -43,59 +43,57 @@ class OrderDayForm extends AbstractHelper
                 '</div>'.
             '</div>'.
             '<div class="tabs-body">'.
-                '<div class="tab" data-tab="main">';
-
-        $html .=
-            $formFactory->structure([
-                ['id'],
-                [
-                    ['width' => 20, 'element' => 'date'],
-                    ['width' => 20, 'element' => 'time'],
-                    ['width' => 20, 'element' => 'transfer_time'],
-                    ['width' => 20, 'element' => 'car_delivery_time'],
-                    ['width' => 20, 'element' => 'duration'],
-                ],
-                [
-                    ['width' => 20, 'element' => 'margin'],
-                    ['width' => 80, 'element' => 'transfer_id'],
-                ],
-                [
-                    'type'   => 'panel',
-                    'children' => [
-                        [
-                            ['width' => 50,
-                                'element' => '[options][proposal][place_start]',
-                                'html' =>
-                                    '<span class="btn btn-2 btn-prefix" data-text="Встреча с гидом по адресу: "><i class="fas fa-map-marker-alt"></i></span>'.
-                                    '<span class="btn btn-2 btn-prefix" data-text="Встреча с гидом в холле гостиницы "><i class="fas fa-building"></i></span>',
-                            ],
+                /*'<div class="tab" data-tab="main">'.
+                $formFactory->structure([
+                    ['id'],
+                    [
+                        ['width' => 20, 'element' => 'date'],
+                        ['width' => 20, 'element' => 'time'],
+                        ['width' => 20, 'element' => 'transfer_time'],
+                        ['width' => 20, 'element' => 'car_delivery_time'],
+                        ['width' => 20, 'element' => 'duration'],
+                    ],
+                    [
+                        ['width' => 20, 'element' => 'margin'],
+                        ['width' => 80, 'element' => 'transfer_id'],
+                    ],
+                    [
+                        'type'   => 'panel',
+                        'children' => [
                             [
-                                'width' => 50,
-                                'element' => '[options][proposal][place_end]',
-                                'html' =>
-                                    '<span class="btn btn-2 btn-prefix" data-text="Окончание экскурсии по адресу: "><i class="fas fa-map-marker-alt"></i></span>'.
-                                    '<span class="btn btn-2 btn-prefix" data-text="Окончание экскурсии у гостиницы "><i class="fas fa-building"></i></span>',
+                                ['width' => 50,
+                                    'element' => '[options][proposal][place_start]',
+                                    'html' =>
+                                        '<span class="btn btn-2 btn-prefix" data-text="Встреча с гидом по адресу: "><i class="fas fa-map-marker-alt"></i></span>'.
+                                        '<span class="btn btn-2 btn-prefix" data-text="Встреча с гидом в холле гостиницы "><i class="fas fa-building"></i></span>',
+                                ],
+                                [
+                                    'width' => 50,
+                                    'element' => '[options][proposal][place_end]',
+                                    'html' =>
+                                        '<span class="btn btn-2 btn-prefix" data-text="Окончание экскурсии по адресу: "><i class="fas fa-map-marker-alt"></i></span>'.
+                                        '<span class="btn btn-2 btn-prefix" data-text="Окончание экскурсии у гостиницы "><i class="fas fa-building"></i></span>',
+                                ],
                             ],
                         ],
                     ],
-                ],
-                [
-                    'type'   => 'panel',
-                    'name'   => 'Расписание',
-                    'attrs'  => ['data-anchor' => 'timetable'],
-                    'children' => [
-                        '[options][proposal][timetable][autocalc]', '[timetable]'
+                    [
+                        'type'   => 'panel',
+                        'name'   => 'Расписание',
+                        'attrs'  => ['data-anchor' => 'timetable'],
+                        'children' => [
+                            '[options][proposal][timetable][autocalc]', '[timetable]'
+                        ],
                     ],
-                ],
-                [
-                    'type'   => 'panel',
-                    'name'   => 'В стоимость включено',
-                    'attrs'  => ['data-anchor' => 'pricetable'],
-                    'children' => [
-                        '[options][proposal][pricetable][autocalc]', '[pricetable]'
+                    [
+                        'type'   => 'panel',
+                        'name'   => 'В стоимость включено',
+                        'attrs'  => ['data-anchor' => 'pricetable'],
+                        'children' => [
+                            '[options][proposal][pricetable][autocalc]', '[pricetable]'
+                        ],
                     ],
-                ],
-            ]).
+                ]).
             '</div>'.
             '<div class="tab" data-tab="guides">'.
                 $formFactory->structure([[
@@ -144,76 +142,13 @@ class OrderDayForm extends AbstractHelper
                         '[options][extra][autocalc]', '[extra]'
                     ],
                 ]]).
-            '</div>'.
+            '</div>'.*/
         '</div>';
 
         $html .=
             '</div>';
 
-        /*$html .=
-            '<fieldset>'.
-            '<legend>Расписание</legend>'.
-                $view->formRow($form->get('[options][proposal][timetable][autocalc]')).
-                $view->formElement($form->get('[timetable]')).
-            '</fieldset>';
-
-        $html .=
-            '<fieldset>'.
-                '<legend>В стоимость включено</legend>'.
-                $view->formRow($form->get('[options][proposal][pricatable][autocalc]')).
-                $view->formElement($form->get('[pricetable]')).
-            '</fieldset>';
-
-        $html .=
-            '</div>'.
-            '<div class="tab" data-tab="guides">';
-
-        $html .=
-            '<fieldset>'.
-                //'<legend>Гиды</legend>'.
-                '<div class="errors std-errors" data-name="guides"></div>'.
-                $view->formRow($form->get('[options][guides][autocalc]')).
-                $view->formElement($form->get('[guides]')).
-            '</fieldset>';
-
-        $html .=
-            '</div>'.
-            '<div class="tab" data-tab="museums">';
-
-        $html .=
-            '<fieldset>'.
-                //'<legend>Музеи</legend>'.
-                '<div class="errors std-errors" data-name="museums"></div>'.
-                $view->formRow($form->get('[options][museums][autocalc]')).
-                $view->formElement($form->get('[museums]')).
-            '</fieldset>';
-
-        $html .=
-            '</div>'.
-            '<div class="tab" data-tab="transports">';
-    
-        $html .=
-            '<fieldset>'.
-                //'<legend>Транспорт</legend>'.
-                '<div class="errors std-errors" data-name="transports"></div>'.
-                $view->formRow($form->get('[options][transports][autocalc]')).
-                $view->formElement($form->get('[transports]')).
-            '</fieldset>';
-
-        $html .=
-            '</div>'.
-            '<div class="tab" data-tab="extra">';
-
-        $html .=
-        '<fieldset>'.
-            //'<legend>Прочие расходы</legend>'.
-            $view->formRow($form->get('[options][extra][autocalc]')).
-            $view->formElement($form->get('[extra]')).
-        '</fieldset>';
-
-        $html .=
-            '</div>';*/
-
+        return '';
         return $html;
     }
 }

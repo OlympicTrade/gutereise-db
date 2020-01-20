@@ -256,7 +256,7 @@ class OrdersService extends TableService
 
         $dayId = 1;
         $orderAutocalc = true;
-        foreach ($order->plugin('days') as $day) {
+        foreach ($order->days() as $day) {
             $dataToCalc['days'][$dayId] = $this->getFormalizeDayData($day, $tourists);
             $dayId++;
         }

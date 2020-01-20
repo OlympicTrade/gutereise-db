@@ -22,8 +22,10 @@
     },
     "require": {
         "google/apiclient": "2.*",
+        "cache/cache": "1.0.0",
         "zendframework/zendframework": "3.*",
         "zendframework/zend-developer-tools": "^1.1.0",
+        "bjyoungblood/bjy-profiler": "^1.1.0",
         "ghislainf/zf2-whoops": "dev-master",
         "matthiasmullie/minify":"*",
         "leafo/scssphp": "*"

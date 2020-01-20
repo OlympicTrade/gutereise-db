@@ -159,7 +159,6 @@ class OrdersController extends TableController
 
     public function documentsAction()
     {
-
         $data = $this->params()->fromPost();
         $order = new Order(['id' => $data['oid']]);
         $order->load();
@@ -170,12 +169,14 @@ class OrdersController extends TableController
             'order_id' => $order->id()
         ]);
 
-        $view = new ViewModel();
+        $view = $this->initLayout();
         $view->setVariables([
-            'form'  => $form,
+            'form'    => $form,
         ]);
 
-        $view->setTerminal(true);
+        $this->layout()->setVariables([
+            'header'  => 'Документы',
+        ]);
 
         return $view;
     }

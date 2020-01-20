@@ -8,7 +8,7 @@ use Pipe\Cache\CacheAwareInterface;
 use Zend\Cache\Storage\Adapter\AbstractAdapter as CacheAdapter;
 
 use Zend\Db\TableGateway\Feature\GlobalAdapterFeature as StaticDbAdapter;
-use Pipe\Cache\Feature\GlobalAdapterFeature as StaticCacheAdapter;
+use Pipe\Cache\CacheFactory as StaticCacheAdapter;
 
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Delete;
@@ -87,7 +87,7 @@ class AbstractDb implements AdapterAwareInterface, CacheAwareInterface
     public function getCacheAdapter()
     {
         if (!$this->cache) {
-            $this->setCacheAdapter(StaticCacheAdapter::getStaticAdapter('data'));
+            $this->setCacheAdapter(StaticCacheAdapter::getAdapter('data'));
         }
 
         return $this->cache;

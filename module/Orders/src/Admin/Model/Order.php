@@ -45,7 +45,10 @@ class Order extends Entity
             'plugins'    => [
                 'days' =>  function() {
                     $list = OrderDay::getEntityCollection();
-                    $list->select()->order('date ASC');
+                    $list->select()
+                        ->order('date ASC')
+                        ->order('time ASC');
+
                     return $list;
                 },
                 'clients' =>  function() {
