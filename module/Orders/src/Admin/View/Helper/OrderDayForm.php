@@ -43,7 +43,7 @@ class OrderDayForm extends AbstractHelper
                 '</div>'.
             '</div>'.
             '<div class="tabs-body">'.
-                /*'<div class="tab" data-tab="main">'.
+                '<div class="tab" data-tab="main">'.
                 $formFactory->structure([
                     ['id'],
                     [
@@ -142,13 +142,12 @@ class OrderDayForm extends AbstractHelper
                         '[options][extra][autocalc]', '[extra]'
                     ],
                 ]]).
-            '</div>'.*/
+            '</div>'.
         '</div>';
 
         $html .=
             '</div>';
 
-        return '';
         return $html;
     }
 }
