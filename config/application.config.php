@@ -19,7 +19,7 @@ return [
         'Sync',
 
         'BjyProfiler',
-        //'ZendDeveloperTools',
+        'ZendDeveloperTools',
 
         'Zend\Router',
         'Zend\Cache',

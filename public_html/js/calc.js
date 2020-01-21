@@ -97,6 +97,7 @@ function calcDetails(calcData) {
     totalResult.hotels = hotelsResult;
 
     $.each(calcData.days, function(dayId, dayData) {
+
         var dayResult = {
             html: '',
             errorsCount: 0,

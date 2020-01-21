@@ -73,7 +73,15 @@ class GuidePrice extends Entity
         $timeFrom = $options['time'];
 
         $this->select()->where(['lang_id' => $options['lang_id']]);
-        $resp['income'] = $this->get('price') * $duration;
+        $guide = (new Guide())->id($options['guide_id'])->load();
+
+        if($guide) {
+            $pph = $guide->price;
+        } else {
+            $pph = $this->price;
+        }
+
+        //$resp['income'] = $pph * $duration;
 
         $timeFrom = Time::getDT($timeFrom);
         $timeTo   = (clone $timeFrom)->addition($duration);
@@ -81,7 +89,7 @@ class GuidePrice extends Entity
         $dateRange = new \DatePeriod((clone $timeFrom)->round('up')->getDtObj(), new \DateInterval('PT1H'), (clone $timeTo)->round('down')->getDtObj());
 
         //Ночью в 1.5 раза дороже
-        $priceDay = $this->get('price');
+        $priceDay = $pph;
         $priceNight = $priceDay * 1.5;
 
         $hours = ['day' => 0, 'night' => 0];
@@ -117,34 +125,30 @@ class GuidePrice extends Entity
 
         $pphIncome = ($hours['day'] * $priceDay) + ($hours['night'] * $priceNight);
         $income = min(max($pphIncome, $this->get('min_price')), $this->get('max_price'));
-        $outgo = $income;
-
-        $guideName = 'Гид: ';
-
         $income = round($income / 100) * 100;
 
+        $outgo = $income;
+        $guideName = 'Гид: ' . ($guide ? $guide->name : 'не указан');
+
         $desc = '';
-        if($income == $this->get('min_price')) {
+        if($income == $this->min_price) {
             $desc .= 'мин. стомиость ' . $income . ' > ' . $pphIncome;
         }
 
-        if($income == $this->get('max_price')) {
+        if($income == $this->max_price) {
             $desc .= 'макс. стомиость ' . $income . ' < ' . $pphIncome;
         }
 
         $desc .= $hours['day']   ? ' Д: ' . $hours['day']   . ' час. * ' . $priceDay .  ', ' : '';
         $desc .= $hours['night'] ? 'Н: ' . $hours['night'] . ' час. * ' . $priceNight .  ', ' : '';
 
-        if($options['guide_id']) {
-            $guide = new Guide();
-            $guide->id($options['guide_id']);
-            $guideName .= $guide->get('name');
-            $guidePriceDay = $guide->get('price');
+        /*if($guide) {
+            $guidePriceDay = $guide->price;
             $guidePriceNight = $guidePriceDay * 1.5;
-            $outgo = max((($hours['day'] * $guidePriceDay) + ($hours['night'] * $guidePriceNight)), $this->get('min_price'));
-        }
+            $outgo = max((($hours['day'] * $guidePriceDay) + ($hours['night'] * $guidePriceNight)), $this->min_price);
+        }*/
 
-        $outgo = round($outgo / 100) * 100;
+        //$outgo = round($outgo / 100) * 100;
 
         return [
             'errors'    => [],

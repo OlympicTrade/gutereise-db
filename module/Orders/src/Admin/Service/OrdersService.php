@@ -256,6 +256,8 @@ class OrdersService extends TableService
 
         $dayId = 1;
         $orderAutocalc = true;
+
+        //$order->days()->d();
         foreach ($order->days() as $day) {
             $dataToCalc['days'][$dayId] = $this->getFormalizeDayData($day, $tourists);
             $dayId++;
@@ -323,13 +325,13 @@ class OrdersService extends TableService
             'days_count' => $order->get('options')->hotels->days_count
         ];
 
-        foreach($order->plugin('hotels') as $roomRow) {
-            $hotelsData['hotels'][$roomRow['hotel_id']]['id'] = $roomRow->get('hotel_id');
+        foreach($order->hotels() as $roomRow) {
+            $hotelsData['hotels'][$roomRow['hotel_id']]['id'] = $roomRow->hotel_id;
             $hotelsData['hotels'][$roomRow['hotel_id']]['rooms'][] = [
-                'id'        => $roomRow->get('room_id'),
-                'tourists'  => $roomRow->get('tourists'),
-                'breakfast' => $roomRow->get('breakfast'),
-                'bed_size'  => $roomRow->get('bed_size'),
+                'id'        => $roomRow->room_id,
+                'tourists'  => $roomRow->tourists,
+                'breakfast' => $roomRow->breakfast,
+                'bed_size'  => $roomRow->bed_size,
             ];
         }
 
@@ -345,14 +347,14 @@ class OrdersService extends TableService
         ];
 
         $dayData = [
-            'day_id'         => $day->get('day_id'),
-            'margin'         => $day->get('margin'),
-            'date'           => $day->get('date')->format('Y-m-d'),
-            'time'           => $day->get('time')->format(),
-            'transfer_time'  => $day->get('transfer_time'),
-            'transfer_id'    => $day->get('transfer_id'),
-            'car_delivery_time'  => $day->get('car_delivery_time'),
-            'duration'       => $day->get('duration'),
+            'day_id'         => $day->day_id,
+            'margin'         => $day->margin,
+            'date'           => $day->date->format('Y-m-d'),
+            'time'           => $day->time->format(),
+            'transfer_time'  => $day->transfer_time,
+            'transfer_id'    => $day->transfer_id,
+            'car_delivery_time'  => $day->car_delivery_time,
+            'duration'       => $day->duration,
             'guides'         => [
                 'list'  => [],
                 'income' => 0,
@@ -369,42 +371,42 @@ class OrdersService extends TableService
 
         $dayData['extra']['autocalc'] = $dOptions['extra']['autocalc'];
         $dayData['extra']['list'] = [];
-        foreach ($day->plugin('extra') as $row) {
-            $income = $row->get('per_person') ? $row->get('per_person') * $tourists : $row->get('income');
+        foreach ($day->extra() as $row) {
+            $income = $row->per_person ? $row->per_person * $tourists : $row->income;
 
             $dayData['extra']['list'][] = [
-                'name'          => $row->get('name'),
-                'proposal_name' => $row->get('proposal_name'),
+                'name'          => $row->name,
+                'proposal_name' => $row->proposal_name,
                 'income'        => $income,
-                'outgo'         => $row->get('outgo'),
+                'outgo'         => $row->outgo,
                 'errors'        => [],
             ];
         }
 
         $dayData['proposal']['pricetable']['autocalc'] = $dOptions['proposal']['pricetable']['autocalc'];
         $dayData['proposal']['pricetable']['list'] = [];
-        foreach ($day->plugin('pricetable') as $row) {
-            $dayData['proposal']['pricetable']['list'][] = $row->get('name');
+        foreach ($day->pricetable() as $row) {
+            $dayData['proposal']['pricetable']['list'][] = $row->name;
         }
 
         $dayData['proposal']['timetable']['autocalc'] = $dOptions['proposal']['timetable']['autocalc'];
         $dayData['proposal']['timetable']['list'] = [];
-        foreach ($day->plugin('timetable') as $row) {
+        foreach ($day->timetable() as $row) {
             $dayData['proposal']['timetable']['list'][] = [
-                'name'     => $row->get('name'),
-                'duration' => $row->get('duration'),
+                'name'     => $row->name,
+                'duration' => $row->duration,
             ];
         }
 
         $dayData['guides']['autocalc'] = $dOptions['guides']['autocalc'];
         if(!$dOptions['guides']['autocalc']) {
-            foreach ($day->plugin('guides') as $guide) {
+            foreach ($day->guides() as $guide) {
                 $newGuide = [
                     'errors'    => [],
-                    'duration'  => $guide->get('duration'),
-                    'guide_id'  => $guide->get('guide_id'),
-                    'income'    => $guide->get('income'),
-                    'outgo'     => $guide->get('outgo'),
+                    'duration'  => $guide->duration,
+                    'guide_id'  => $guide->guide_id,
+                    'income'    => $guide->income,
+                    'outgo'     => $guide->outgo,
                 ];
 
                 $dayData['guides']['count'] += 1;
@@ -412,15 +414,15 @@ class OrdersService extends TableService
             }
         }
 
-        foreach ($day->plugin('museums') as $museum) {
+        foreach ($day->museums() as $museum) {
             $newMuseum = [
-                'id'                => $museum->get('museum_id'),
-                'duration'          => $museum->get('duration'),
-                'tickets_adults'    => $museum->get('tickets_adults'),
-                'tickets_children'  => $museum->get('tickets_children'),
-                'guides'            => $museum->get('guides'),
-                'extra'             => $museum->get('extra'),
-                'outgo'             => $museum->get('outgo'),
+                'id'                => $museum->museum_id,
+                'duration'          => $museum->duration,
+                'tickets_adults'    => $museum->tickets_adults,
+                'tickets_children'  => $museum->tickets_children,
+                'guides'            => $museum->guides,
+                'extra'             => $museum->extra,
+                'outgo'             => $museum->outgo,
             ];
 
             $dayData['museums'][] = $newMuseum;

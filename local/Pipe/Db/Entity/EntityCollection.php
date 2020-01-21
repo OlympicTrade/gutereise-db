@@ -73,7 +73,7 @@ class EntityCollection extends AbstractDb implements Iterator, AdapterInterface,
 
         foreach ($result as $row) {
             //$this->data[$row['id']] = (clone $this->getPrototype())->rFill($row);
-            $this->data[$row['id']] = ($this->getPrototype())->getClearCopy()->rFill($row);
+            $this->data[$row['id']] = $this->getPrototype()->getClearCopy()->rFill($row);
         }
 
         $this->loaded = true;

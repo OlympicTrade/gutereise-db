@@ -144,7 +144,7 @@ $this->adminSidebar()->addItems([
     foreach($days as $day) {
         $d++;
         $html .=
-            '<div class="tab" data-tab="' . $day->date . '">День ' . $d . '</div>';
+            '<div class="tab" data-tab="' . $d . '">День ' . $d . '</div>';
     }
 
     $html .=
@@ -156,7 +156,7 @@ $this->adminSidebar()->addItems([
     foreach($days as $day) {
         $d++;
         $html .=
-            '<div class="tab" data-tab="' . $day->date . '">' . $this->orderDayForm($day) . '</div>';
+            '<div class="tab" data-tab="' . $d . '">' . $this->orderDayForm($day) . '</div>';
     }
 
     $html .=
@@ -170,8 +170,6 @@ $this->adminSidebar()->addItems([
 <script>
     var form = $('.table-edit-order');
     var sidebar = $('#nav .module');
-
-    //
 
     $('[name="options[proposal][autocalc]"]', form).on('change', function () {
         if($(this).is(':checked')) {
@@ -447,8 +445,8 @@ $this->adminSidebar()->addItems([
 
                     $.each(resp.days, function (dayId, dayData) {
                         var dayDetails = details.days[dayId];
-                        var tabHeader = $('.order-days-tabs > .tabs-header > .tab[data-tab="' + dayData.date + '"]', form);
-                        var tabBody = $('.order-days-tabs > .tabs-body > .tab[data-tab="' + dayData.date + '"]', form);
+                        var tabHeader = $('.order-days-tabs > .tabs-header > .tab[data-tab="' + dayId + '"]', form);
+                        var tabBody = $('.order-days-tabs > .tabs-body > .tab[data-tab="' + dayId + '"]', form);
 
                         $('.day-details', tabBody).html(dayDetails.html);
 

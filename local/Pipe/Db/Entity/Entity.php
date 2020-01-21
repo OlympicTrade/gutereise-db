@@ -799,7 +799,7 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
     /** @return $this */
     public function getClearCopy()
     {
-        $class = get_class($this);
+        $class = get_called_class();
         return new $class();
 
         /*$copy = clone $this;
@@ -975,7 +975,7 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
             $this->plugin($pluginName)->unserializeArray($pluginData);
         }
 
-        //$this->loaded = true;
+        $this->loaded = true;
 
         return $this;
     }

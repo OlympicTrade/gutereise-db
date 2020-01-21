@@ -93,8 +93,6 @@ class OrdersController extends TableController
     {
         $data = $this->params()->fromPost();
 
-        define('DD', 1);
-
         $order = new Order();
 
         $form = new OrdersEditForm();
