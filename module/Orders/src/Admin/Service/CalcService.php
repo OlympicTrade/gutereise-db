@@ -592,7 +592,6 @@ class CalcService extends AbstractService
         } else {
             $margin = $this->calcMargin($commonData, $dayData);
         }
-
         //Summary
         $summary = [];
 

@@ -236,15 +236,15 @@ class OrdersService extends TableService
     public function calcOrder(Order $order, $options = [])
     {
         $dataToCalc = [
-            'lang_id'        => $order->get('lang_id'),
+            'lang_id'        => $order->lang_id,
             'kp_lang'        => $order->options['proposal']['lang'],
             'currency'       => $order->options['currency']['currency'],
             'currency_rate'  => $order->options['currency']['rate'],
-            'adults'         => $order->get('adults'),
-            'children'       => $order->get('children'),
-            'margin'         => $order->get('margin'),
-            'manager_id'     => $order->get('manager_id'),
-            'agency'         => $order->get('agency'),
+            'adults'         => $order->adults,
+            'children'       => $order->children,
+            'margin'         => $order->margin,
+            'manager_id'     => $order->manager_id,
+            'agency'         => $order->agency,
             'calc_type'      => $options['calc_type'],
             'clients'        => [],
             'days'           => [],
@@ -257,11 +257,13 @@ class OrdersService extends TableService
         $dayId = 1;
         $orderAutocalc = true;
 
-        //$order->days()->d();
         foreach ($order->days() as $day) {
             $dataToCalc['days'][$dayId] = $this->getFormalizeDayData($day, $tourists);
             $dayId++;
         }
+        /*if($_SERVER['REQUEST_URI'] == '/orders/calc-proposal/') {
+            dd($dataToCalc);
+        }*/
 
         $dataToCalc['hotels'] = $this->getFormalizeHotelsData($order);
 
@@ -292,6 +294,10 @@ class OrdersService extends TableService
         }
 
         $calcData = $this->getCalcService()->calc($dataToCalc);
+        /*if($_SERVER['REQUEST_URI'] == '/orders/calc-proposal/') {
+            dd($calcData);
+        }*/
+
         $calcData['errors'] += $orderErrors;
 
         foreach ($calcData['days'] as $dayId => &$calcDay) {
@@ -372,12 +378,13 @@ class OrdersService extends TableService
         $dayData['extra']['autocalc'] = $dOptions['extra']['autocalc'];
         $dayData['extra']['list'] = [];
         foreach ($day->extra() as $row) {
-            $income = $row->per_person ? $row->per_person * $tourists : $row->income;
+            //$income = $row->per_person ? $row->per_person * $tourists : $row->income;
 
             $dayData['extra']['list'][] = [
                 'name'          => $row->name,
                 'proposal_name' => $row->proposal_name,
-                'income'        => $income,
+                'per_person'    => $row->per_person,
+                'income'        => $row->income,
                 'outgo'         => $row->outgo,
                 'errors'        => [],
             ];
