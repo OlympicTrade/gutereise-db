@@ -855,11 +855,12 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
                 continue;
             }
 
+            unset($this->plugins[$pluginName]);
             $this->plugins[$pluginName]['object'] = (clone $plugin)->setParent($this);
         }
 
         $this->id(0);
-        //$this->loaded = false;
+        $this->loaded = false;
         //$this->saved = false;
 
         return $this;

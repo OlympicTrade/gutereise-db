@@ -73,7 +73,11 @@ class GuidePrice extends Entity
         $timeFrom = $options['time'];
 
         $this->select()->where(['lang_id' => $options['lang_id']]);
-        $guide = (new Guide())->id($options['guide_id'])->load();
+
+        $guide = false;
+        if($options['guide_id']) {
+            $guide = (new Guide())->id($options['guide_id'])->load();
+        }
 
         if($guide) {
             $pph = $guide->price;
