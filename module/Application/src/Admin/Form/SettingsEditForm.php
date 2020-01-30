@@ -56,11 +56,15 @@ class SettingsEditForm extends Form
                 'fields' => $fields = [
                     'name' => [
                         'name'    => 'Назвние',
-                        'width'   => '250',
+                        'width'   => '150',
+                    ],
+                    '[declension][5]' => [
+                        'name'    => 'Твор. падеж',
+                        'width'   => '150',
                     ],
                     'code' => [
                         'name'  => 'Код',
-                        'width' => '120',
+                        'width' => '60',
                     ],
                 ],
                 'plugin'  => $this->getModel()->plugin('languages'),

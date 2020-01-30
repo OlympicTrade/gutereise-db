@@ -233,10 +233,12 @@ class TableController extends AbstractController
         if(!$header = $model->get('name')) {
             $header = 'Новая запись';
         }
+        $this->layout()->setVariable('header', $header);
 
         if(!$this->isAjax()) {
             $this->layout()->getVariable('meta')->title = $header;
-            $this->layout()->setVariable('header', $header);
+        } else {
+            $this->layout()->setVariables(['headerBtns'  => 'tableEdit']);
         }
 
         $breadcrumbs = $this->layout()->getVariable('breadcrumbs');
@@ -260,7 +262,6 @@ class TableController extends AbstractController
         $view->setVariables([
             'structure'   => $structure,
             'form'        => $editForm,
-            'headerBtns'  => 'tableEdit',
             strtolower($module->model()) => $model,
         ]);
 

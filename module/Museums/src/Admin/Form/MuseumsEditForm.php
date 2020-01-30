@@ -222,6 +222,11 @@ class MuseumsEditForm extends Form
                         'name'  => 'по',
                         'width' => '90',
                     ],
+                    'foreigners' => [
+                        'name'  => 'Национальность',
+                        'width' => '130',
+                        'options' => \Application\Admin\Model\Nationality::$nationalityType
+                    ],
                 ],
                 'plugin'  => $this->getModel()->plugin('worktime'),
             ],

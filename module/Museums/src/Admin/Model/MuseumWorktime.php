@@ -13,6 +13,7 @@ class MuseumWorktime extends Entity
                 'weekday'     => [],
                 'time_from'   => [],
                 'time_to'     => [],
+                'foreigners'  => [],
             ],
         ];
     }

@@ -29,7 +29,12 @@ class Museum extends Entity
                     return MuseumWeekends::getEntityCollection();
                 },
                 'worktime' => function($model) {
-                    return MuseumWorktime::getEntityCollection();
+                    $list = MuseumWorktime::getEntityCollection();
+                    $list->select()
+                        ->order('weekday ASC')
+                        ->order('time_from ASC');
+
+                    return $list;
 
                 },
                 'extra' => function($model) {

@@ -37,7 +37,7 @@ class Order extends Entity
                     'virtual'   => true,
                     'filters'   => [
 						'set'      => function($model) {
-							return $model->get('income') - $model->get('outgo');
+							return $model->income - $model->outgo;
 						}
 					],
                 ],
@@ -72,9 +72,7 @@ class Order extends Entity
                 ],
                 'language' => [
                     'factory' => function($model) {
-                        $language = new Language();
-                        $language->select()->where(['id' => $model->get('lang_id')]);
-                        return $language;
+                        return (new Language())->id($model->get('lang_id'));
                     },
                     'independent' => true,
                 ],

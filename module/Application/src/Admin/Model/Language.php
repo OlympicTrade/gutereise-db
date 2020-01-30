@@ -10,11 +10,17 @@ class Language extends Entity
         return [
             'table'      => 'settings_languages',
             'properties' => [
-                'depend' => [],
-                'name'   => [],
-                'code'   => [],
+                'depend'     => [],
+                'name'       => [],
+                'declension' => ['type' => Entity::PROPERTY_TYPE_JSON],
+                'code'       => [],
             ],
         ];
+    }
+
+    static function getLanguage($langId)
+    {
+        return (new self())->id($langId);
     }
 
     public function setCode($code)

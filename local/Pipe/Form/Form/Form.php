@@ -177,57 +177,7 @@ class Form extends ZendForm {
                 $elName = substr($elName, strlen($this->prefix));
             }
 
-            $elName = ltrim($elName, '[');
-            $elName = str_replace(']', '', $elName);
-
-            $trace = explode('[', $elName);
-            $traceCount = count($trace);
-
-            $value = $model;
-            for($i = 0; $i < $traceCount; $i++) {
-                $tName = $trace[$i];
-
-                /*if($elName == 'options[extra[autocalc' && $i > 0) {
-                    d('-------'); d($value); d($tName);
-                }*/
-
-                if($value instanceof Entity) {
-                    if($value->hasProperty($tName)) {
-                        $value = $value->$tName;
-                    } elseif($value->hasPlugin($tName)) {
-                        $value = $value->$tName();
-                    } else {
-                        $value = null;
-                        break;
-                    }
-                } elseif($value instanceof EntityCollection) {
-                    foreach ($value as $row) {
-                        if($row->id() == $tName) {
-                            $value = $row;
-                            break;
-                        }
-                    }
-                    if($value instanceof EntityCollection) {
-                        $value = null;
-                        break;
-                    }
-                } elseif(is_array($value) || $value instanceof \ArrayAccess) {
-                    $value = $value[$tName];
-                } elseif($value === null) {
-                    break;
-                } else {
-                    $value = null;
-                    break;
-                    throw new \Exception(
-                    'Unknown value type. ' . "\n" .
-                        'Form: ' . get_called_class() . "\n" .
-                        'el full name: ' . $element->getName() . ', ' . "\n" .
-                        'el short name: ' . $elName . ', ' . "\n" .
-                        'step: ' . $tName . ', ' . "\n" .
-                        'value: "' . (is_object($value) ? get_class($value) : $value) . '"'
-                    );
-                }
-            }
+            $value = $model->getByTrace($elName);
 
             if($element instanceof EntityAware) {
                 $element->setValue($value);

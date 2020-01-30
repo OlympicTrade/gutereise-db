@@ -18,10 +18,10 @@ class AbstractContainer
     }
 
     /**
-     * @param array $options
+     * @param mixed $options
      * @return string
      */
-    public function get($options = [])
+    public function get($options = null)
     {
         return $this->source;
     }
@@ -47,6 +47,11 @@ class AbstractContainer
 
         $this->isChanged = true;
         $this->source = $value;
+
+        /*if($_SERVER['REQUEST_URI'] == '/orders/calc-proposal/') {
+            d($value);
+        }*/
+
         return $this;
     }
 

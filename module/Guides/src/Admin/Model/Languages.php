@@ -1,4 +1,4 @@
-<?php
+<?php /*
 namespace Guides\Admin\Model;
 
 use Pipe\Db\Entity\Entity;
@@ -39,7 +39,7 @@ class Languages extends Entity
     {
         return $full ? self::$languagesDeclension : self::$languages;
     }
-}
+}*/
 
 
 

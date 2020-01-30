@@ -22,6 +22,7 @@ use \Pipe\Db\Entity\Containers;
 
 use Pipe\Db\Plugin\PluginInterface;
 use PhpOffice\PhpWord\Exception\Exception;
+use Pipe\Form\Element\EntityAware;
 use Zend\Db\Adapter\AdapterAwareInterface;
 
 use ArrayAccess;
@@ -737,7 +738,7 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
             return $this;
         }
 
-        if (!array_key_exists($name, $this->getProperties()) || $value === null) {
+        if (!$this->hasProperty($name) || $value === null) {
             return $this;
             throw new \Exception('Trying to set unknown property "' . $name . '"');
         }
@@ -764,11 +765,11 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
 
     /**
      * @param $name
-     * @param array $options
+     * @param mixed $options
      * @return int|mixed|string|ArrayObject
      * @throws Exception
      */
-    public function get($name, array $options = [])
+    public function get($name, $options = null)
     {
         $this->load();
 
@@ -786,6 +787,51 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
 
         if($options['filter'] !== false && $property['filters']['get']) {
             $value = call_user_func_array($property['filters']['get'], [$this, $value]);
+        }
+
+        return $value;
+    }
+
+    public function getByTrace($trace)
+    {
+        $trace = ltrim($trace, '[');
+        $trace = str_replace(']', '', $trace);
+
+        $trace = explode('[', $trace);
+        $traceCount = count($trace);
+
+        $value = $this;
+        for($i = 0; $i < $traceCount; $i++) {
+            $tName = $trace[$i];
+
+            if($value instanceof Entity) {
+                if($value->hasProperty($tName)) {
+                    $value = $value->$tName;
+                } elseif($value->hasPlugin($tName)) {
+                    $value = $value->$tName();
+                } else {
+                    $value = null;
+                    break;
+                }
+            } elseif($value instanceof EntityCollection) {
+                foreach ($value as $row) {
+                    if($row->id() == $tName) {
+                        $value = $row;
+                        break;
+                    }
+                }
+                if($value instanceof EntityCollection) {
+                    $value = null;
+                    break;
+                }
+            } elseif(is_array($value) || $value instanceof \ArrayAccess) {
+                $value = $value[$tName];
+            } elseif($value === null) {
+                break;
+            } else {
+                $value = false;
+                break;
+            }
         }
 
         return $value;
@@ -944,9 +990,14 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
      * @return $this
      * @throws \Exception
      */
-    public function unserializeArray($data)
+    public function unserializeArray($data, $load = true)
     {
+        //dd($data);
         $dataPlugins = [];
+
+        if($data['id'] && $load) {
+            $this->id($data['id'])->load();
+        }
 
         foreach($data as $name => $value) {
             if($this->hasProperty($name)) {
@@ -970,10 +1021,8 @@ class Entity extends AbstractDb implements ArrayAccess, Iterator, Serializable, 
             }
         }
 
-        //$this->loaded = true;
-
         foreach($dataPlugins as $pluginName => $pluginData) {
-            $this->plugin($pluginName)->unserializeArray($pluginData);
+            $this->plugin($pluginName)->unserializeArray($pluginData, false);
         }
 
         $this->loaded = true;

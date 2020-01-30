@@ -19,10 +19,21 @@ class Json extends AbstractContainer
         return $this;
     }
 
-    public function get($options = []) {
+    public function get($trace = null) {
         $this->touched = true;
         if($this->value === null) {
             $this->unserialize();
+        }
+
+        if($trace) {
+            $trace = ltrim($trace, '[');
+            $trace = str_replace(']', '', $trace);
+            $trace = explode('[', $trace);
+
+            $value = $this->value;
+            for($i = 0; $i < count($trace); $i++) {
+                $value = $value[$trace[$i]];
+            }
         }
 
         return $this->value;

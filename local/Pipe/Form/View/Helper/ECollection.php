@@ -20,7 +20,7 @@ class ECollection extends AbstractHelper
         /*foreach ($items as $item) {
             d($item->price);
         }*/
-		
+
         //$prefix     = $element->getName() . '[ecollection]';
         $prefix     = $element->getName();
         $formName   = $options['form'] ?? $prefix;
@@ -92,7 +92,7 @@ class ECollection extends AbstractHelper
                             'name'      => $elName,
                             'field'     => $field,
                             'opts'      => $opts,
-                            'val'       => $item->get($field),
+                            'val'       => $item->getByTrace($field),
                         ]);
 
                 if($moduleName) {
@@ -132,6 +132,12 @@ class ECollection extends AbstractHelper
             '<div class="item pattern">'; //style="display: none;" id="' . $prefix . '-' . $formName . '-form"
 
         foreach ($fields as $field => $opts) {
+            /*if(strpos($field, '[') === false) {
+                $elName = $prefix . '[_ID_]';
+            } else {
+                $elName = $prefix . '_ID_]';
+            }*/
+
             $elName = $prefix . '[_ID_]';
             $moduleName  = !empty($opts['module']) ? $opts['module'] : null;
             $sectionName = !empty($opts['section']) ? $opts['section'] : $moduleName;
@@ -196,7 +202,14 @@ class ECollection extends AbstractHelper
 
         $html = '';
 
-        $name = $opts['name'] . '[' . $opts['field'] . ']';
+        //$name = $opts['name'] . '[' . $opts['field'] . ']';
+
+        if(strpos($opts['field'], '[') === false) {
+            $name = $opts['name'] . '[' . $opts['field'] . ']';
+        } else {
+            $name = $opts['name'] . $opts['field'];
+        }
+
         $class = $filedOpts['class'];
 
         if($opts['val'] === '' || $opts['val'] === null) {

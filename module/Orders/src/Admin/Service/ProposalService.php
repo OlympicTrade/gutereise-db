@@ -10,7 +10,6 @@ use Pipe\Mvc\Service\Admin\TableService;
 use Drivers\Admin\Model\Driver;
 use Excursions\Admin\Model\ExcursionDay;
 use Guides\Admin\Model\Guide;
-use Guides\Admin\Model\Languages;
 use Hotels\Admin\Model\Hotel;
 use Hotels\Admin\Model\HotelRoom;
 use Managers\Admin\Model\Manager;
@@ -394,9 +393,10 @@ class ProposalService extends TableService
 
         foreach ($orderPriceTable['guides'] as $guideData) {
             $durationStr = $this->dateToStr($guideData['duration'], $tr);
+
             $priceTable[] =
-                $tr->tr('Услуги персонального гида с') . ' ' .
-                $tr->tr(mb_strtolower(Languages::getLanguages(true)[$commonData['lang_id']][2])) . ' ' .
+                $tr->tr('Услуги персонального гида с ') . ' ' .
+                $tr->tr(mb_strtolower(Language::getLanguage($commonData['lang_id'])->declension['5'])) . ' ' .
                 $tr->tr('языком') . ' ' . $durationStr;
         }
 
@@ -456,7 +456,9 @@ class ProposalService extends TableService
             $guidesPrTbl = [];
 
             foreach ($dayData['guides']['list'] as $guideData) {
-                $str = mb_strtolower(Languages::getLanguages(true)[$commonData['lang_id']][2]) . ' языком ' . Time::getDT($guideData['duration'])->getString();
+                $str =
+                    $tr->tr(mb_strtolower(Language::getLanguage($commonData['lang_id'])->declension['5'])).
+                    ' языком ' . Time::getDT($guideData['duration'])->getString();
                 $hash = crc32($str);
 
                 if(isset($guidesPrTbl[crc32($str)])) {
@@ -471,9 +473,11 @@ class ProposalService extends TableService
 
             foreach ($guidesPrTbl as $row) {
                 if($row['guides'] == 1) {
-                    $priceTable[] = $tr->tr('Услуги персонального гида с') . ' ' . $row['str'];
+                    $priceTable[] =
+                        $tr->tr('Услуги персонального гида с') . ' ' . $row['str'];
                 } else {
-                    $priceTable[] = $tr->tr('Услуги') . ' ' . $tr->declension($row['guides'], 'персонального гида') . $tr->tr(' с ') . $tr->tr($row['str']);
+                    $priceTable[] =
+                        $tr->tr('Услуги') . ' ' . $tr->declension($row['guides'], 'персонального гида') . $tr->tr(' с ') . $tr->tr($row['str']);
                 }
             }
         }

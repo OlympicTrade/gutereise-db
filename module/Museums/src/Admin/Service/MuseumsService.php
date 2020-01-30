@@ -72,7 +72,8 @@ class MuseumsService extends TableService
         $workdays->select()
             ->where
                 ->equalTo('depend', $museum->id())
-                ->equalTo('weekday', $dt->format('N'));
+                ->equalTo('weekday', $dt->format('N'))
+                ->equalTo('foreigners', Nationality::langToNationality($opts['lang_id']));
 
         if(!$workdays->load()) {
             $result['errors'][self::ERROR_WORKDAY] = 'Выходной день в музее';
