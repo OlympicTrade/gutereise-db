@@ -117,20 +117,17 @@ class OrdersController extends TableController
             $email = $data['email'];
             $proposal = $data['proposal'];
 
-            if(MODE == 'dev' && !in_array($email, ['info@Pipe.ru', 'vks.ecommerce@gmail.com', 'vasiljeva.lubov.57@gmail.com'])) {
-                return new JsonModel([]);
+            if(MODE == 'dev' && !in_array($email, ['vks.ecommerce@gmail.com'])) {
+                return new JsonModel(['status' => 1]);
             }
 
-            $mail = new Mail();
-            $mail->setTemplate(MODULE_DIR . '/Orders/view/orders/admin/mail/order-proposal.phtml')
-                ->setHeader('Gute Reise')
+            $this->getServiceManager()->get('Mail')
+                ->setTemplate(MODULE_DIR . '/Orders/view/orders/admin/mail/order-proposal.phtml')
                 ->addTo($email)
-                ->setVariables([
-                    'proposal'  => $proposal,
-                ])
+                ->setVariables(['proposal'  => $proposal])
                 ->send();
 
-            return new JsonModel([]);
+            return new JsonModel(['status' => 1]);
         }
 
         $order = new Order();
@@ -184,7 +181,7 @@ class OrdersController extends TableController
         $data = $this->params()->fromPost();
 
         $order = new Order(['id' => $data['oid']]);
-        $gcalendar = $order->plugin('gcalendar');
+        $gcalendar = $order->gcalendar();
 
         if($data['type'] == 'save') {
             $gcalendar->load();

@@ -50,19 +50,20 @@
                     email: btn.data('email'),
                     proposal: $('.proposal', box).val()
                 },
-                success: function() {
-                    message.setMessage({icon: 'far fa-envelope', text: 'Отправлено'});
+                success: function(resp) {
+                    if(resp.status = 1) {
+                        message.setMessage({icon: 'far fa-envelope', text: 'Отправлено'});
 
-                    btn.removeClass('send')
-                        .removeClass('red')
-                        .addClass('green')
-                        .html('<i class="fas fa-check"></i>');
+                        btn.removeClass('send')
+                            .removeClass('red')
+                            .addClass('green')
+                            .html('<i class="fas fa-check"></i>');
+                    } else {
+                        btn.addClass('red')
+                            .addClass('green')
+                            .html('<i class="fas fa-times"></i>');
+                    }
                 },
-                error: function () {
-                    btn.addClass('red')
-                        .addClass('green')
-                        .html('<i class="fas fa-times"></i>');
-                }
             });
         });
 

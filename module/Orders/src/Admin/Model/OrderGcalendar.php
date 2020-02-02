@@ -25,22 +25,6 @@ class OrderGCalendar extends Entity
         ];
     }
 
-    /*public function __construct()
-    {
-        $this->setTable('order_gcalendar');
-
-        $this->addProperties([
-            'depend'      => [],
-            'calendar_id' => [],
-            'active'      => [],
-        ]);
-
-        $this->addPlugin('emails', function($model) {
-            return OrderGcalendarEmail::getEntityCollection();
-            return $list;
-        });
-    }*/
-
     public function syncStatus()
     {
         if(!$this->get('active')) {

@@ -7,8 +7,8 @@ define('REQUEST_MICROTIME', microtime(true));
 define('MODULE_DIR', realpath(__DIR__ . '/../module'));
 define('PUBLIC_DIR', realpath(__DIR__));
 define('DATA_DIR', realpath(__DIR__ . '/../data'));
-define('ONLINE', false);
-define('MODE', getenv('APP_ENV') ?: 'public');
+define('ONLINE', true);
+define('MODE', getenv('APP_ENV') ?: 'dev');
 define('ADMIN_PREFIX', '');
 /*
 switch($_COOKIE['mode']) {

@@ -35,10 +35,6 @@ class OrderConstants
         self::PAYMENT_TYPE_ORG    => 'Безналичный расчет',
     ];
 
-    const TRANSPORT_TYPE_NONE   = 0;
-    const TRANSPORT_TYPE_AUTO   = 1;
-    const TRANSPORT_TYPE_MANUAL = 2;
-
     const CLIENT_TYPE_CLIENT  = 0;
     const CLIENT_TYPE_AGENCY  = 1;
 

@@ -4,6 +4,7 @@ namespace Pipe\Mail;
 
 //use Pipe\View\Helper\Translator as TrHelper;
 //use Translator\Model\Translator;
+use Application\Admin\Model\Settings;
 use Zend\Mail\Message;
 use Zend\Mail\Transport\Smtp;
 use Zend\Mail\Transport\SmtpOptions;
@@ -49,29 +50,37 @@ class Mail
 
     /** @var array */
     protected $options = [];
+    static protected $globalOptions = [];
     
-    public function __construct ()
+    public function __construct ($options = [])
     {
+        $options = $options + self::$globalOptions;
+        $this->setOptions($options);
+
         $this->view = new PhpRenderer();
 
         $this->view->getHelperPluginManager()
             ->setFactory('tags', function () {
                 return new \Pipe\View\Helper\Mail();
-            })/*->setFactory('tr', function () {
-                return new TrHelper();
-            })*/;
+            });
 
         $this->message = new Message();
         $this->message->setEncoding('utf-8');
         $this->message->addFrom($this->options['sender']['email'], $this->options['sender']['name']);
+        $this->setHeader($this->options['sender']['name']);
 
         $this->transport = new Smtp();
         $this->transport->setOptions(new SmtpOptions($this->options['connection']));
     }
-    
+
+    static public function setGlobalOptions($options)
+    {
+        self::$globalOptions = $options;
+    }
+
     public function setOptions($options)
     {
-        $this->options = $options;
+        $this->options = $options + self::$globalOptions;
     }
 
     public function addTo($email)
@@ -150,7 +159,7 @@ class Mail
         $viewModel->setTemplate('mailTemplate');
         $viewModel->setVariables($this->variables);
 
-        $domain = \Application\Model\Settings::getInstance()->get('domain');
+        $domain = Settings::getInstance()->domain;
 
         $viewModel->setVariables([
             'domain'     => $domain,

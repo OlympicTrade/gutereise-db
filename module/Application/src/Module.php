@@ -21,7 +21,7 @@ class Module
         $sEm = $em->getSharedManager();
 
         StaticDbAdapter::setStaticAdapter($sm->get('Zend\Db\Adapter\Adapter'));
-        $sm->get('Zend\Db\Adapter\Adapter')->getProfiler()->getQueryProfiles();
+        //$sm->get('Zend\Db\Adapter\Adapter')->getProfiler()->getQueryProfiles();
 
         $sEm->attach(AbstractActionController::class,MvcEvent::EVENT_DISPATCH,
             function(MvcEvent $e) {
@@ -32,10 +32,9 @@ class Module
         $sEm->attach(AbstractActionController::class, MvcEvent::EVENT_DISPATCH,
             [$this, 'preDispatch'], 50);
 
-        $sEm->attach(AbstractActionController::class, MvcEvent::EVENT_DISPATCH, function() use ($sm) {
+        /*$sEm->attach(AbstractActionController::class, MvcEvent::EVENT_DISPATCH, function() use ($sm) {
             $sm->get('Zend\Db\Adapter\Adapter')->getProfiler()->getQueryProfiles();
-            //dd($sm->get('Zend\Db\Adapter\Adapter')->getProfiler()->getQueryProfiles());
-        });
+        });*/
 
         $sm->get('ViewHelperManager')->get('FormElement')
             ->addClass(PElement\EArray::class, PHelper\EArray::class)

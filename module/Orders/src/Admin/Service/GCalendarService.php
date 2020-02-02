@@ -3,6 +3,7 @@
 namespace Orders\Admin\Service;
 
 use Orders\Admin\Model\Order;
+use Orders\Admin\Model\OrderConstants;
 use Pipe\Google\Client;
 use Pipe\Google\Color;
 use Pipe\Mvc\Service\AbstractService;
@@ -13,7 +14,7 @@ class GCalendarService extends AbstractService
     {
         if(!ONLINE) return;
 
-        $gcalendar = $order->plugin('gcalendar');
+        $gcalendar = $order->gcalendar();
         if(!$gcalendar->get('active')) {
             return;
         }
@@ -66,17 +67,17 @@ class GCalendarService extends AbstractService
         $event->setColorId($colorId);
 
         switch ($order->get('status')) {
-            case Order::STATUS_NEW:
+            case OrderConstants::STATUS_NEW:
                 $colorId = Color::$colors['red'];
                 break;
-            case Order::STATUS_PROCESS:
+            case OrderConstants::STATUS_PROCESS:
                 if($order->get('errors')) {
                     $colorId = Color::$colors['yellow'];
                 } else {
                     $colorId = Color::$colors['green'];
                 }
                 break;
-            case Order::STATUS_CANCELED:
+            case OrderConstants::STATUS_CANCELED:
                 $colorId = Color::$colors['gray'];
                 break;
             default:
@@ -93,8 +94,8 @@ class GCalendarService extends AbstractService
         }
 
         $emails = [];
-        foreach ($gcalendar->plugin('emails') as $email) {
-            if(!$email->get('active')) continue;
+        foreach ($gcalendar->emails() as $email) {
+            if(!$email->active) continue;
 
             $emails[] = [
                 'email'          => $email->get('email'),
@@ -116,15 +117,15 @@ class GCalendarService extends AbstractService
         $firstDay = false;
         $lastDay = false;
 
-        foreach ($order->plugin('days') as $day) {
+        foreach ($order->days() as $day) {
             $firstDay = $firstDay ?? $day;
             $lastDay = $day;
         }
 
-        $firstDay = $order->plugin('days')->rewind()->current();
+        $firstDay = $order->days()->rewind()->current();
         $event->setLocation($firstDay->get('options')->proposal->place_start);
 
-        $event->setDescription(str_replace(["\n", "\r"], '', $order->get('proposal')));
+        $event->setDescription(str_replace(["\n", "\r"], '', $order->proposal));
 
         $dtStart = \DateTime::createFromFormat('Y-m-d H:i:s', $order->get('date_from')->format() . ' ' . $firstDay->get('time')->format());
         $dtEnd   = \DateTime::createFromFormat('Y-m-d H:i:s', $order->get('date_to')->format() . ' ' . $lastDay->get('time')->format());
@@ -147,13 +148,13 @@ class GCalendarService extends AbstractService
         ]));
 
         if($update) {
-            $service->events->update($calendarId, $event->id(), $event);
+            $service->events->update($calendarId, $event->getId(), $event);
         } else {
             $event = $service->events->insert($calendarId, $event);
         }
 
         if($event->status == 'confirmed') {
-            $gcalendar->set('calendar_id', $event->id());
+            $gcalendar->set('calendar_id', $event->getId());
         }
 
         $gcalendar->save();

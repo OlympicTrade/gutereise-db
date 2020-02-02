@@ -32,7 +32,7 @@
                 '<div class="list">';
 
             foreach ($emails as $id => $email) {
-                $prefix = 'emails[ecollection][' . $id . ']';
+                $prefix = 'emails[' . $id . ']';
                 $html .=
                     '<div class="row">'.
                         '<input type="hidden" data-field="email" name="' . $prefix . '[email]" value="' . $email['email'] . '">'.
@@ -119,7 +119,7 @@
                 var i = $('.row', list).length + 1;
                 var email = input.val();
 
-                var prefix = 'emails[ecollection][new-' + i + ']';
+                var prefix = 'emails[new-' + i + ']';
                 var html =
                     '<div class="row">' +
                         '<input type="hidden" data-field="email" name="' + prefix + '[email]" value="' + email + '">' +

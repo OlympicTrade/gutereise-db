@@ -18,8 +18,8 @@ return [
         'Users',
         'Sync',
 
-        'BjyProfiler',
-        'ZendDeveloperTools',
+        //'BjyProfiler',
+        //'ZendDeveloperTools',
 
         'Zend\Router',
         'Zend\Cache',
