@@ -368,7 +368,6 @@ class ProposalService extends TableService
         return $result;
     }
 
-
     protected function dateToStr($date, Translator $tr)
     {
         list($hours, $minutes) = explode(':', $date);

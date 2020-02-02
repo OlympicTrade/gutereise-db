@@ -294,7 +294,7 @@ class CalcService extends AbstractService
             ],
             'agency'     => $data['agency'],
             'margin'     => $data['margin'],
-            'foreigners' => ($data['lang_id'] != 1),
+            'foreigners' => ([$data['lang_id'] != 1, 3]),
             'calc_type'  => ($data['calc_type'] ?? 'calc'),
         ];
         //unset($commonData['days']);

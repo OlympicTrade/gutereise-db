@@ -44,11 +44,7 @@ class ExcursionDay extends Entity
                     if($options['foreigners']) {
                         $extra->select()->where
                             ->equalTo('depend', $model->id())
-                            ->nest()
-                            ->equalTo('foreigners', $options['foreigners'])
-                            ->or
-                            ->equalTo('foreigners', Nationality::NATIONALITY_ALL)
-                            ->unnest();
+                            ->in('foreigners', $options['foreigners']);
                     }
 
                     if($options['tourists']) {
@@ -75,11 +71,7 @@ class ExcursionDay extends Entity
                     if($options['foreigners']) {
                         $guides->select()->where
                             ->equalTo('depend', $model->id())
-                            ->nest()
-                            ->equalTo('foreigners', $options['foreigners'])
-                            ->or
-                            ->equalTo('foreigners', Nationality::NATIONALITY_ALL)
-                            ->unnest();
+                            ->in('foreigners', $options['foreigners']);
                     }
 
                     if($options['tourists']) {
@@ -98,11 +90,7 @@ class ExcursionDay extends Entity
                     if($options['foreigners']) {
                         $timetable->select()->where
                             ->equalTo('depend', $model->id())
-                            ->nest()
-                            ->equalTo('foreigners', $options['foreigners'])
-                            ->or
-                            ->equalTo('foreigners', Nationality::NATIONALITY_ALL)
-                            ->unnest();
+                            ->in('foreigners', $options['foreigners']);
                     }
 
                     if($options['tourists']) {

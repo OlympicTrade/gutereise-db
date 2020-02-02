@@ -302,11 +302,7 @@ class CalcController extends AbstractController
                 /** @var ExcursionMuseums $museums */
                 $museums = $day->plugin('museums');
                 $museums->select()->where
-                    ->nest()
-                        ->equalTo('foreigners', Nationality::langToNationality($langId))
-                        ->or
-                        ->equalTo('foreigners', Nationality::NATIONALITY_ALL)
-                    ->unnest();
+                    ->in('foreigners', Nationality::langToNationality($langId));
 
                 foreach ($museums as $row) {
                     $dayData['museums'][] = [

@@ -29,7 +29,7 @@ class MuseumsService extends TableService
         $children = (int) ($opts['children']);
         $tourists = $adults + $children;
 
-        $nationality = Nationality::langToNationality($opts['lang_id']);
+        $nationality    = Nationality::langToNationality($opts['lang_id']);
 
         $timeFromDt = Time::getDT($opts['timeFrom']);
         $timeToDt = Time::getDT($opts['timeTo']);
@@ -73,7 +73,7 @@ class MuseumsService extends TableService
             ->where
                 ->equalTo('depend', $museum->id())
                 ->equalTo('weekday', $dt->format('N'))
-                ->equalTo('foreigners', Nationality::langToNationality($opts['lang_id']));
+                ->in('foreigners', Nationality::langToNationality($opts['lang_id']));
 
         if(!$workdays->load()) {
             $result['errors'][self::ERROR_WORKDAY] = 'Выходной день в музее';
@@ -156,11 +156,7 @@ class MuseumsService extends TableService
             ->where
             ->equalTo('depend', $museum->id())
             ->lessThanOrEqualTo('count', $tourists)
-            ->nest()
-                ->equalTo('foreigners', $nationality)
-                ->or
-                ->equalTo('foreigners', Nationality::NATIONALITY_ALL)
-            ->unnest();
+			->in('foreigners', $nationality);
 
         if($adults) {
             $guides->select()
@@ -190,11 +186,7 @@ class MuseumsService extends TableService
                 ->unnest()
             ->unnest()
             ->equalTo('depend', $museum->id())
-            ->nest()
-            ->equalTo('foreigners', Nationality::langToNationality($opts['lang_id']))
-            ->or
-            ->equalTo('foreigners', Nationality::NATIONALITY_ALL)
-            ->unnest()
+            ->in('foreigners', Nationality::langToNationality($opts['lang_id']))
             ->nest()
                 ->equalTo('transport_type', ($opts['isWalking'] ? MuseumExtra::TRANSPORT_WALK : MuseumExtra::TRANSPORT_AUTO))
                 ->or

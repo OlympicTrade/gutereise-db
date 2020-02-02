@@ -75,15 +75,11 @@ class MuseumTickets extends Entity
         });
     }*/
 
-    public function loadByDate($museumId, $dt, $foreigners = Nationality::NATIONALITY_ALL)
+    public function loadByDate($museumId, $dt, $foreigners = [Nationality::NATIONALITY_ALL])
     {
         $this->select()->where
             ->equalTo('depend', $museumId)
-            ->nest()
-                ->equalTo('foreigners', $foreigners)
-                ->or
-                ->equalTo('foreigners', Nationality::NATIONALITY_ALL)
-            ->unnest()
+			->in('foreigners', $foreigners)
             ->nest()
                 ->nest()
                     ->lessThanOrEqualTo('date_from', $dt->format('0000-m-d'))

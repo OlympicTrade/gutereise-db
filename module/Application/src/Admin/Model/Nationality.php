@@ -13,29 +13,12 @@ class Nationality
         self::NATIONALITY_FOREIGN   => 'Иностранцы',
     ];
 
-    /*static public $nationalityLangs = [
-        1  => 'Русский',
-        2  => 'Немецкий',
-        3  => 'Английский',
-        4  => 'Французский',
-        5  => 'Испанский',
-        6  => 'Итальянский',
-        10 => 'Китайский',
-    ];
-
-    static public $languagesDeclension = [
-        1  => ['Русский', 'Русском', 'Русским'],
-        2  => ['Немецкий', 'Немецком', 'Немецким'],
-        3  => ['Английский', 'Английском', 'Английским'],
-        4  => ['Французский', 'Французском', 'Французским'],
-        5  => ['Испанский', 'Испанском', 'Испанским'],
-        6  => ['Итальянский', 'Итальянском', 'Итальянским'],
-        10 => ['Китайский', 'Китайском', 'Китайским'],
-    ];*/
-
     static public function langToNationality($langId)
     {
-        return $langId != 1 ? Nationality::NATIONALITY_FOREIGN: Nationality::NATIONALITY_RUSSIAN;
+        return [
+            $langId != 1 ? Nationality::NATIONALITY_FOREIGN: Nationality::NATIONALITY_RUSSIAN,
+            Nationality::NATIONALITY_ALL
+        ];
     }
 
     static public function isForeigners($langId)
