@@ -271,7 +271,7 @@ class CalcController extends AbstractController
                 $date = clone $lastDay;
             }
 
-            foreach ($tour->plugin('days') as $day) {
+            foreach ($tour->days() as $day) {
                 //$attrs = $day->plugin('attrs');
                 $options = $day->options;
 

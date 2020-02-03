@@ -127,7 +127,7 @@ class ExcursionDay extends Entity
     {
         $options = $options + [
             'tourists'   => 10,
-            'foreigners' => Nationality::NATIONALITY_RUSSIAN,
+            'foreigners' => [Nationality::NATIONALITY_RUSSIAN, Nationality::NATIONALITY_ALL],
         ];
 
         $duration = Time::getDT();
